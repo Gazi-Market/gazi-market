@@ -14,8 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Gazimarket"
         tools:targetApi="31">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".account.LoginActivity" />
+        <activity android:name=".account.SignupActivity" />
+        <activity android:name=".account.SignUpOkActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
