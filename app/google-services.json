@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1016310391636",
+    "project_id": "gazimarket-9d218",
+    "storage_bucket": "gazimarket-9d218.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016310391636:android:17f4d87fbb164f32c21ec1",
+        "android_client_info": {
+          "package_name": "com.gazi_market"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCc9KUSpQoc6T1JP6kTKp35cbg6n406ICY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
