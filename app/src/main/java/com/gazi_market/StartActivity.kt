@@ -26,17 +26,16 @@ class StartActivity : AppCompatActivity() {
             val intent = Intent(this, SignupActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
-//            auth?.signOut()
         }
 
         // 로그인
         val signin = findViewById<TextView>(R.id.go_login)
         signin.setOnClickListener {
 
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                startActivity(intent)
-            }
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+        }
 
 
     }

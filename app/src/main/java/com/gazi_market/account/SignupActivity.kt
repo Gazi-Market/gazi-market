@@ -1,29 +1,45 @@
 package com.gazi_market.account
 
+import android.R.attr
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.gazi_market.R
+import com.gazi_market.StartActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+
 
 class SignupActivity : AppCompatActivity() {
     private var auth : FirebaseAuth? = null
+    private val db : FirebaseFirestore = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
         setContentView(R.layout.activity_signup)
+
+        val backBtn = findViewById<ImageView>(R.id.img_btn_back)
+        backBtn.setOnClickListener {
+            startActivity(Intent(this@SignupActivity, StartActivity::class.java))
+            finish()
+        }
 
         val signupID = findViewById<EditText>(R.id.signupID)
         val signupPwd = findViewById<EditText>(R.id.signupPassword)
@@ -118,11 +134,11 @@ class SignupActivity : AppCompatActivity() {
 
         signupButton.setOnClickListener {
 
-            createAccount(signupID.text.toString(), signupPwd.text.toString())
+            createAccount(signupID.text.toString(), signupPwd.text.toString(), signupNickName.text.toString())
         }
     }
     // 계정 생성
-    private fun createAccount(email: String, password: String) {
+    private fun createAccount(email: String, password: String, nickname : String) {
 
         if (email.isNotEmpty() && password.isNotEmpty()) {
             auth?.createUserWithEmailAndPassword(email, password)
@@ -132,13 +148,44 @@ class SignupActivity : AppCompatActivity() {
                             this, "계정 생성 완료.",
                             Toast.LENGTH_SHORT
                         ).show()
-                        // 회원가입 화면으로
-                        val intent = Intent(this, SignUpOkActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        intent.putExtra("email", email)
-                        intent.putExtra("password", password)
-                        startActivity(intent)
-                        //finish() // 가입창 종료
+
+                        val user = FirebaseAuth.getInstance().currentUser
+                        val uid = user?.uid
+                        Log.d("user uid", "$uid 테스트")
+
+                        if (uid != null) {
+
+                            val userMap: MutableMap<String, Any> = HashMap()
+                            userMap["uid"] = uid
+                            userMap["email"] = email
+                            userMap["name"] = nickname
+
+                            db.collection("users")
+                                .document(uid)
+                                .set(userMap)
+                                .addOnSuccessListener {
+                                    // 문서 추가 성공
+                                    Toast.makeText(
+                                        this, "계정 생성 및 데이터 추가 완료.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                    // 회원가입 화면으로
+                                    val intent = Intent(this, SignUpOkActivity::class.java)
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                    intent.putExtra("email", email)
+                                    intent.putExtra("password", password)
+                                    startActivity(intent)
+                                }
+                                .addOnFailureListener {
+                                    // 문서 추가 실패
+                                    Toast.makeText(
+                                        this, "Firestore에 데이터 추가 실패",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                        }
+
                     } else {
                         Toast.makeText(
                             this, "계정 생성 실패",
