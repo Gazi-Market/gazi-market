@@ -3,6 +3,7 @@ package com.gazi_market
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.gazi_market.chat.ChatRoomFragment
 import com.gazi_market.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +19,13 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId) {
                 R.id.home -> replaceFragment(Home())
-                R.id.chat -> replaceFragment(Chat())
+                R.id.chat -> {
+//                    replaceFragment(Chat())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.frameLayout, ChatRoomFragment())
+                        .commit()
+                    return@setOnItemSelectedListener true
+                }
                 R.id.my_page -> replaceFragment(MyPage())
 
                 else -> {

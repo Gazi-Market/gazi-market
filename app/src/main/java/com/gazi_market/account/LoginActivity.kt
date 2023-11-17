@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
 import com.gazi_market.MainActivity
 import com.gazi_market.R
+import com.gazi_market.StartActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -21,6 +24,12 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         auth = Firebase.auth
+
+        val backBtn = findViewById<ImageView>(R.id.img_btn_back)
+        backBtn.setOnClickListener {
+            startActivity(Intent(this@LoginActivity, StartActivity::class.java))
+            finish()
+        }
 
         val id = findViewById<EditText>(R.id.signupID)
         val pwd = findViewById<EditText>(R.id.signupPassword)
