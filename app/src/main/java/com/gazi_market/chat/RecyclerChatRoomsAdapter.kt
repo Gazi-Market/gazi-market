@@ -2,6 +2,7 @@ package com.gazi_market.chat
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gazi_market.R
 import com.gazi_market.databinding.ListChatroomItemBinding
 import com.gazi_market.model.ChatRoom
+import com.gazi_market.model.Message
 import com.gazi_market.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -62,11 +64,36 @@ class RecyclerChatRoomsAdapter(val context: Context) :
                     val chatRoom = document.toObject(ChatRoom::class.java)
                     chatRooms.add(chatRoom)
                     chatRoomKeys.add(document.id)
+
+                    // 각 채팅방에 대해 메시지를 가져오는 함수 호출
+                    loadMessagesForChatRoom(document.id, chatRoom)
                 }
                 notifyDataSetChanged()
             }
             .addOnFailureListener { exception ->
                 // Handle failures
+            }
+    }
+
+    fun loadMessagesForChatRoom(chatRoomKey: String, chatRoom: ChatRoom) {
+        db.collection("chatRoom")
+            .document(chatRoomKey)
+            .collection("messages")
+            .get()
+            .addOnSuccessListener { documents ->
+                val messages = mutableMapOf<String, Message>()
+
+                for (document in documents) {
+                    val message = document.toObject(Message::class.java)
+                    messages[document.id] = message
+                }
+
+                // 각 채팅방의 messages 필드 업데이트
+                chatRoom.messages = messages
+                notifyDataSetChanged()
+            }
+            .addOnFailureListener { exception ->
+                // 실패 시 처리
             }
     }
 
@@ -102,11 +129,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
                         }
                     }
 
-//                    if (chatRooms[position].messages!!.isNotEmpty()) {
-//                        setupLastMessageAndDate(holder, position)
-//                        setupMessageCount(holder, position)
-//                    }
-                    if (!chatRooms[position].messages.isNullOrEmpty()) {
+                    if (!chatRooms[position].messages.isNullOrEmpty()){
                         setupLastMessageAndDate(holder, position)
                         setupMessageCount(holder, position)
                     }
@@ -158,10 +181,11 @@ class RecyclerChatRoomsAdapter(val context: Context) :
     fun setupLastMessageAndDate(holder: ViewHolder, position: Int) { //마지막 메시지 및 시각 초기화
         try {
             var lastMessage =
-                chatRooms[position].messages!!.values.sortedWith(compareBy({ it.sended_date }))    //메시지 목록에서 시각을 비교하여 가장 마지막 메시지  가져오기
+                chatRooms[position].messages!!.values.sortedWith(compareBy { it.sended_date })    //메시지 목록에서 시각을 비교하여 가장 마지막 메시지  가져오기
                     .last()
             holder.txt_message.text = lastMessage.content                 //마지막 메시지 표시
             holder.txt_date.text = getLastMessageTimeString(lastMessage.sended_date)   //마지막으로 전송된 시각 표시
+            Log.d("room Test", "${lastMessage.content} ${getLastMessageTimeString(lastMessage.sended_date)}")
         } catch (e: Exception) {
             e.printStackTrace()
         }

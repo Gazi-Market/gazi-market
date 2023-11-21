@@ -58,34 +58,6 @@ class RecyclerMessagesAdapter(
 //            })
 //    }
 
-//    fun getMessages() {
-//        db.collection("chatRoom")
-//            .document(chatRoomKey!!) // Firestore에서는 document의 ID를 직접 명시해줘야 합니다.
-//            .collection("messages")
-//            .addSnapshotListener { snapshot, exception ->
-//                if (exception != null) {
-//                    // 오류 처리
-//                    return@addSnapshotListener
-//                }
-//
-//                if (snapshot != null) {
-//                    messages.clear()
-//                    messageKeys.clear()
-//
-//                    for (document in snapshot.documents) {
-//                        // Firestore에서는 데이터를 가져올 때 as를 사용하지 않습니다.
-//                        val message = document.toObject(Message::class.java)
-//                        if (message != null) {
-//                            messages.add(message)
-//                            messageKeys.add(document.id)
-//                        }
-//                    }
-//
-//                    notifyDataSetChanged()
-//                    recyclerView.scrollToPosition(messages.size - 1)
-//                }
-//            }
-//    }
     fun getMessages() {
         db.collection("chatRoom")
             .document(chatRoomKey!!)
@@ -178,10 +150,13 @@ class RecyclerMessagesAdapter(
 
             if (message.confirmed.equals(true))           //확인 여부 표시
                 txtIsShown.visibility = View.GONE
-            else
+            else{
                 txtIsShown.visibility = View.VISIBLE
+                setShown(position)  //해당 메시지 확인하여 서버로 전송
+            }
 
-            setShown(position)             //해당 메시지 확인하여 서버로 전송
+
+
         }
 
         fun getDateText(sendDate: String): String {    //메시지 전송 시각 생성
@@ -214,26 +189,29 @@ class RecyclerMessagesAdapter(
 //                    Log.i("checkShown", "성공")
 //                }
 //        }
-    fun setShown(position: Int) {
-        val messageKey = messageKeys[position]
+        private fun setShown(position: Int) {
+            val messageKey = messageKeys[position]
 
-        val chatRoomRef = db.collection("chatRoom").document(chatRoomKey!!)
-        val messageRef = chatRoomRef.collection("messages").document(messageKey)
+            val chatRoomRef = db.collection("chatRoom").document(chatRoomKey!!)
+            val messageRef = chatRoomRef.collection("messages").document(messageKey)
 
-        // 업데이트할 필드와 값 설정
-        val updates = hashMapOf<String, Any>(
-            "confirmed" to true
-        )
+            // 업데이트할 필드와 값 설정
+            val updates = hashMapOf<String, Any>(
+                "confirmed" to true
+            )
 
-        // 업데이트 수행
-        messageRef.update(updates)
-            .addOnSuccessListener {
-                Log.i("checkShown", "성공")
-            }
-            .addOnFailureListener {
-                Log.e("checkShown", "실패: $it")
-            }
-    }
+            // 업데이트 수행
+            messageRef.update(updates)
+                .addOnSuccessListener {
+                    Log.i("checkShown", "성공")
+                    Log.i("checkShown", "$position")
+                    messages[position].confirmed = true
+                    notifyItemChanged(position)
+                }
+                .addOnFailureListener {
+                    Log.e("checkShown", "실패: $it")
+                }
+        }
 
     }
 
