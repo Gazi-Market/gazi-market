@@ -161,6 +161,7 @@ class ChattingActivity : AppCompatActivity() {
                 .addOnFailureListener {
                     Log.i("putMessage", "메시지 전송에 실패하였습니다")
                 }
+
         } catch (e: Exception) {
             e.printStackTrace()
             Log.i("putMessage", "메시지 전송 중 오류가 발생하였습니다.")
