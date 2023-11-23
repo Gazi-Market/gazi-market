@@ -64,11 +64,11 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/round_input"
         android:ems="10"
-        android:hint="₩ 가격을 입력해주세요."
+        android:hint="가격을 입력해주세요."
         android:inputType="number"
         android:paddingStart="20dp"
-        android:textSize="16sp"
         android:textColorHint="#A6A6A6"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTitle" />
