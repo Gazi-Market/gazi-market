@@ -45,7 +45,7 @@
             app:layout_constraintTop_toTopOf="@+id/tvTitle" />
 
         <ImageButton
-            android:id="@+id/imageButton2"
+            android:id="@+id/btnFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -55,16 +55,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TableLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:stretchColumns="*"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider">
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            tools:listitem="@layout/list_item_summary" />
+        <!--        <GridLayout-->
+<!--            android:id="@+id/gridLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:alignmentMode="alignMargins"-->
+<!--            android:columnCount="3"-->
+<!--            android:stretchColumns="*"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/divider">-->
 
-        </TableLayout>
-        
+<!--        </GridLayout>-->
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
