@@ -2,6 +2,7 @@ package com.gazi_market
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,16 +48,20 @@ class HomeRecyclerViewAdapter(var context: Context) :
             tvPrice.text = if (postData.isSoldOut) "판매 완료" else "${postData.price}원"
         }
 
-        Firebase.storage.reference.child(postData.image).downloadUrl.addOnSuccessListener { uri ->
-            Glide.with(context).load(uri.toString()).into(holder.imageView)
-        }
-
         holder.itemView.setOnClickListener {
             val postData = postList[position]
             val documentId = postData.documentId
             val intent = Intent(holder.itemView.context, DetailPostActivity::class.java)
             intent.putExtra("documentId", documentId)
             holder.itemView.context.startActivity(intent)
+        }
+
+        if (postData.image.isNullOrEmpty()) {
+            Log.e("HomeRecyclerViewAdapter", "image is Null or Empty.. docId: " + postData.documentId)
+            return
+        }
+        Firebase.storage.reference.child(postData.image).downloadUrl.addOnSuccessListener { uri ->
+            Glide.with(context).load(uri.toString()).into(holder.imageView)
         }
     }
 }
