@@ -2,6 +2,7 @@ package com.gazi_market.chat
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import com.gazi_market.databinding.ListPersonItemBinding
 import com.gazi_market.model.ChatRoom
 import com.gazi_market.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -134,17 +136,19 @@ class RecyclerUsersAdapter(val context: Context) :
 //    }
     fun addChatRoom(position: Int) {
         val opponent = users[position] // 채팅할 상대방 정보
+        val user = Firebase.auth.currentUser
         val chatRoom = ChatRoom(mapOf(
             currnentUser.uid!! to true,
             opponent.uid!! to true
         ), null)
 
         db.collection("chatRoom")
-            .whereEqualTo("users.${currnentUser.uid}", true)
+            .whereEqualTo("users.${user?.uid}", true)
             .whereEqualTo("users.${opponent.uid}", true)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
+                    Log.d("chatRoom_TEST", "Empty")
                     // 채팅방이 없는 경우 새로운 채팅방 생성
                     db.collection("chatRoom")
                         .add(chatRoom)
@@ -156,8 +160,11 @@ class RecyclerUsersAdapter(val context: Context) :
                         }
                 } else {
                     // 채팅방이 이미 있는 경우
-                    context.startActivity(Intent(context, MainActivity::class.java))
-                    goToChatRoom(chatRoom, opponent)
+//                    context.startActivity(Intent(context, MainActivity::class.java))
+//                    goToChatRoom(chatRoom, opponent)
+                    Log.d("chatRoom_TEST", "Exist")
+                    val existingChatRoom = querySnapshot.documents[0].toObject(ChatRoom::class.java)
+                    goToChatRoom(existingChatRoom!!, opponent)
                 }
             }
             .addOnFailureListener { e ->

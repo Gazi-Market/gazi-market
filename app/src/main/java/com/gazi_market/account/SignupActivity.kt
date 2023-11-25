@@ -170,7 +170,7 @@ class SignupActivity : AppCompatActivity() {
                                         Toast.LENGTH_SHORT
                                     ).show()
 
-                                    // 회원가입 화면으로
+                                    // 회원가입 완료 화면으로
                                     val intent = Intent(this, SignUpOkActivity::class.java)
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                     intent.putExtra("email", email)
