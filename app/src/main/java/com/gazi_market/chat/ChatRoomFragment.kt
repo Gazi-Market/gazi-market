@@ -19,7 +19,6 @@ import com.google.firebase.database.*
 class ChatRoomFragment : Fragment() {
 
     private lateinit var btnAddchatRoom: Button
-    private lateinit var btnSignout: Button
     private lateinit var binding: ChatRoomLayoutBinding
     private lateinit var firebaseDatabase: DatabaseReference
     private lateinit var recycler_chatroom: RecyclerView
@@ -42,15 +41,11 @@ class ChatRoomFragment : Fragment() {
 
     private fun initializeView() {
         firebaseDatabase = FirebaseDatabase.getInstance().getReference("ChatRoom")!!
-        btnSignout = binding.btnSignout
         btnAddchatRoom = binding.btnNewMessage
         recycler_chatroom = binding.recyclerChatrooms
     }
 
     private fun initializeListener() {
-        btnSignout.setOnClickListener {
-            signOut()
-        }
         btnAddchatRoom.setOnClickListener {
             startActivity(Intent(requireContext(), AddChatRoomActivity::class.java))
             requireActivity().finish()
@@ -62,46 +57,6 @@ class ChatRoomFragment : Fragment() {
         recycler_chatroom.adapter = RecyclerChatRoomsAdapter(requireContext())
     }
 
-    private fun signOut() {
-        try {
-            val builder = AlertDialog.Builder(requireContext())
-                .setTitle("로그아웃")
-                .setMessage("로그아웃 하시겠습니까?")
-                .setPositiveButton(
-                    "확인"
-                ) { dialog, id ->
-                    try {
-                        FirebaseAuth.getInstance().signOut()
-                        startActivity(Intent(requireContext(), LoginActivity::class.java))
-                        dialog.dismiss()
-                        requireActivity().finish()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        dialog.dismiss()
-                        Toast.makeText(
-                            requireContext(),
-                            "로그아웃 중 오류가 발생하였습니다.",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-                .setNegativeButton("취소") { dialog, id ->
-                    dialog.dismiss()
-                }
-            builder.show()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(
-                requireContext(),
-                "로그아웃 중 오류가 발생하였습니다.",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-//    override fun onBackPressed() {
-//        signOut()
-//    }
 }
 
 

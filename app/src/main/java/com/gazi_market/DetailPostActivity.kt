@@ -6,11 +6,23 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.TextView
+import com.gazi_market.chat.AddChatRoomActivity
+import com.gazi_market.chat.ChattingActivity
 import com.bumptech.glide.Glide
 import com.gazi_market.databinding.ActivityDetailPostBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.gazi_market.model.ChatRoom
+import com.gazi_market.model.User
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import android.widget.PopupMenu
@@ -20,6 +32,10 @@ class DetailPostActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityDetailPostBinding
     lateinit var myUid: String
+    lateinit var postUser: User
+  
+    private val db : FirebaseFirestore = Firebase.firestore
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -133,6 +149,9 @@ class DetailPostActivity : AppCompatActivity() {
                         formattedDate ?: "날짜가 없습니다"
                     findViewById<TextView>(R.id.priceTextView).text =
                         if (isSoldOut == true) "판매 완료" else price?.toInt().toString() + "원"
+
+                    // post를 작성한 유저 가져오기
+                    getPostUser()
                 } else {
                     Log.d(TAG, "No such document")
                 }
@@ -140,6 +159,10 @@ class DetailPostActivity : AppCompatActivity() {
             .addOnFailureListener { exception ->
                 Log.d(TAG, "get failed with ", exception)
             }
+
+        binding.registerBtn.setOnClickListener {
+            addChatRoom()
+        }
     }
 
     private fun getTimeAgo(time: Long): String {
@@ -162,5 +185,68 @@ class DetailPostActivity : AppCompatActivity() {
             diff < 2 * MONTH_MILLIS -> "한 달 전"
             else -> "${diff / MONTH_MILLIS}달 전"
         }
+    }
+
+    fun getPostUser(){
+        val user = Firebase.auth.currentUser
+
+        db.collection("users")
+            .document(nickname)
+            .get()
+            .addOnSuccessListener { result ->
+                postUser = result.toObject(User::class.java)!!
+                findViewById<TextView>(R.id.nicknameTextView).text =
+                    postUser.name ?: "Nickname is null"
+
+                if(postUser.uid == user?.uid){
+                    binding.registerBtn.visibility = View.GONE
+                }
+            }
+            .addOnFailureListener { exception ->
+                // 실패 시 처리
+            }
+    }
+    fun addChatRoom() {
+        val user = Firebase.auth.currentUser
+        val chatRoom = ChatRoom(mapOf(
+            user?.uid!! to true,
+            postUser.uid!! to true
+        ), null)
+
+        db.collection("chatRoom")
+            .whereEqualTo("users.${user?.uid}", true)
+            .whereEqualTo("users.${postUser.uid}", true)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    Log.d("chatRoom_TEST", "Empty")
+                    // 채팅방이 없는 경우 새로운 채팅방 생성
+                    db.collection("chatRoom")
+                        .add(chatRoom)
+                        .addOnSuccessListener { documentReference ->
+                            goToChatRoom(chatRoom, postUser)
+                        }
+                        .addOnFailureListener { e ->
+                            // 실패 시 처리
+                        }
+                } else {
+                    val existingChatRoom = querySnapshot.documents[0].toObject(ChatRoom::class.java)
+                    goToChatRoom(existingChatRoom!!, postUser)
+                }
+            }
+            .addOnFailureListener { e ->
+                // 실패 시 처리
+            }
+    }
+
+
+
+    fun goToChatRoom(chatRoom: ChatRoom, opponentUid: User) {       //채팅방으로 이동
+        var intent = Intent(this@DetailPostActivity, ChattingActivity::class.java)
+        intent.putExtra("ChatRoom", chatRoom)       //채팅방 정보
+        intent.putExtra("Opponent", opponentUid)    //상대방 정보
+        intent.putExtra("ChatRoomKey", "")   //채팅방 키
+        startActivity(intent)
+        finish()
     }
 }
