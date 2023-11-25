@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.gazi_market.databinding.ActivityDetailPostBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -14,6 +15,7 @@ import com.google.firebase.storage.ktx.storage
 class DetailPostActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityDetailPostBinding
+    lateinit var myUid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,18 +23,28 @@ class DetailPostActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val db = FirebaseFirestore.getInstance()
+        myUid = FirebaseAuth.getInstance().currentUser?.uid!!
 
         // documentId 가져오기
         val documentId = intent.getStringExtra("documentId").toString() ?: ""
 
         // posts 컬렉션에서 documentId에 해당하는 문서 참조 가져오기
-        val docRef = db.collection("posts").document(documentId)
+        val postDocRef = db.collection("posts").document(documentId)
 
+        // users 컬렉션에서 myUid에 해당하는 문서 참조 가져오기
+        val userDocRef = db.collection("users").document(myUid)
+
+        userDocRef.get()
+            .addOnSuccessListener { document ->
+                val nickname = document.getString("name")
+
+                findViewById<TextView>(R.id.nicknameTextView).text =
+                    nickname ?: "Nickname is null"
+            }
         // 문서 가져오기
-        docRef.get()
+        postDocRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    val nickname = document.getString("nickname")
                     val title = document.getString("title")
                     val content = document.getString("content")
                     val price = document.getDouble("price")
@@ -42,7 +54,6 @@ class DetailPostActivity : AppCompatActivity() {
                     val imageURL = document.getString("image")
 
                     if (!imageURL.isNullOrEmpty()) {
-                        // Firebase Storage에서 이미지 다운로드 URL 생성
                         val storageReference = Firebase.storage.reference
                         storageReference.child(imageURL).downloadUrl
                             .addOnSuccessListener { uri ->
@@ -53,13 +64,13 @@ class DetailPostActivity : AppCompatActivity() {
                             .addOnFailureListener { exception ->
                                 Log.e(TAG, "이미지 다운로드 실패: $exception")
                             }
-                    } else {
-                        // imageURL이 없을 때 처리 (기본 이미지 표시 등)
+                    }
+                    // imageURL이 없을 때 처리 (기본 이미지 표시 등)
+                    else {
+
                     }
 
                     // 데이터가 null이 아닌지 확인 후 TextView에 설정
-                    findViewById<TextView>(R.id.nicknameTextView).text =
-                        nickname ?: "Nickname is null"
                     findViewById<TextView>(R.id.titleTextView).text = title ?: "Title is null"
                     findViewById<TextView>(R.id.contentTextView).text = content ?: "Content is null"
                     findViewById<TextView>(R.id.createdAtTextView).text =
