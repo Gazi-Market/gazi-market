@@ -43,9 +43,11 @@ class HomeRecyclerViewAdapter(var context: Context) :
         val postData: PostData = postList[position]
         val viewHolder = holder as MyViewHolder
 
+        Log.d("HomeRecyclerViewAdapter", postData.toString())
+
         viewHolder.apply {
             tvPostTitle.text = postData.title
-            tvPrice.text = if (postData.isSoldOut) "판매 완료" else "${postData.price}원"
+            tvPrice.text = if (postData.soldOut) "판매 완료" else "${postData.price}원"
         }
 
         holder.itemView.setOnClickListener {
@@ -57,7 +59,7 @@ class HomeRecyclerViewAdapter(var context: Context) :
         }
 
         if (postData.image.isNullOrEmpty()) {
-            Log.e("HomeRecyclerViewAdapter", "image is Null or Empty.. docId: " + postData.documentId)
+            Log.e("HomeRecyclerViewAdapter", postData.documentId + " cannot found image")
             return
         }
         Firebase.storage.reference.child(postData.image).downloadUrl.addOnSuccessListener { uri ->

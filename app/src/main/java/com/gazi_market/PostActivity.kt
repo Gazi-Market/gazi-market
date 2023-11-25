@@ -59,7 +59,7 @@ class PostActivity : AppCompatActivity() {
                 title = title,
                 content = content,
                 price = price,
-                isSoldOut = false,
+                soldOut = false,
                 createdAt = currentTimeStamp,
                 image = "/image/abc"
             )
