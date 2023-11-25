@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,14 +32,11 @@ class PostActivity : AppCompatActivity() {
         binding = ActivityPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 툴바 설정
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        val customToolbar = layoutInflater.inflate(R.layout.custom_post_toolbar, null)
-        val toolbarTitle = customToolbar.findViewById<TextView>(R.id.toolbar_title)
-        toolbarTitle.text = "판매글 등록"
-        toolbar.addView(customToolbar)
-        setSupportActionBar(toolbar) // 액션바로 설정
+        val backBtn = findViewById<ImageView>(R.id.img_btn_back)
+        backBtn.setOnClickListener {
+            startActivity(Intent(this@PostActivity, MainActivity::class.java))
+            finish()
+        }
 
         // 이미지 처리
         binding.selectImageView.setOnClickListener {

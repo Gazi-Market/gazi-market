@@ -7,12 +7,50 @@
     android:layout_height="match_parent"
     tools:context=".DetailPostActivity">
 
+  <RelativeLayout
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background="@android:color/white"
+      app:layout_constraintTop_toTopOf="parent">
+
+    <ImageView
+        android:id="@+id/img_btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/back_btn" />
+
+    <!-- 툴바 타이틀 TextView -->
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="게시글 상세 조회"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_centerInParent="true"/>
+
+    <ImageView
+        android:id="@+id/img_btn_etc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/etc_btn" />
+
+  </RelativeLayout>
+
   <ImageView
       android:id="@+id/productImageView"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:adjustViewBounds="true"
-      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/toolbar"
       app:srcCompat="@drawable/ic_launcher_background" />
 
   <androidx.cardview.widget.CardView

@@ -1,9 +1,11 @@
 package com.gazi_market
 
 import android.content.ContentValues.TAG
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.gazi_market.databinding.ActivityDetailPostBinding
@@ -11,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import android.widget.PopupMenu
+import android.view.ContextThemeWrapper
 
 class DetailPostActivity : AppCompatActivity() {
 
@@ -21,6 +25,58 @@ class DetailPostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val backBtn = findViewById<ImageView>(R.id.img_btn_back)
+        backBtn.setOnClickListener {
+            finish()
+        }
+
+        val etcBtn = findViewById<ImageView>(R.id.img_btn_etc)
+        etcBtn.setOnClickListener {
+            val popupMenu = PopupMenu(ContextThemeWrapper(this, R.style.PopupMenuStyle), etcBtn)
+            popupMenu.menuInflater.inflate(R.menu.post_detail_menu, popupMenu.menu)
+
+            // 아이콘 보이게 하기
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                popupMenu.setForceShowIcon(true)
+            } else {
+                try {
+                    val fields = popupMenu.javaClass.declaredFields
+                    for (field in fields) {
+                        if ("mPopup" == field.name) {
+                            field.isAccessible = true
+                            val menuPopupHelper = field.get(popupMenu)
+                            val classPopupHelper = Class.forName(menuPopupHelper.javaClass.name)
+                            val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.java)
+                            setForceIcons.invoke(menuPopupHelper, true)
+                            break
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            // 팝업 메뉴 아이템 클릭 이벤트 처리
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.menu_edit -> {
+                        // "판매글 수정하기" 클릭 시 할 동작 구현
+                        // 예시: 수정 화면으로 이동하거나 해당 기능 실행
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.menu_mark_sold -> {
+                        // "판매완료로 변경" 클릭 시 할 동작 구현
+                        // 예시: 상태 변경 작업 수행 또는 해당 기능 실행
+                        return@setOnMenuItemClickListener true
+                    }
+                    else -> return@setOnMenuItemClickListener false
+                }
+            }
+
+            popupMenu.show()
+        }
+
 
         val db = FirebaseFirestore.getInstance()
         myUid = FirebaseAuth.getInstance().currentUser?.uid!!
