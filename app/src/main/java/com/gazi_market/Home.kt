@@ -67,6 +67,7 @@ class Home : Fragment() {
                 "판매중" -> homeViewModel.loadSaleItems()
                 "판매완료" -> homeViewModel.loadSoldOutItems()
             }
+            tvTitle.text = filterOptions[which] + " 목록"
         }.setNegativeButton("취소", null).show()
     }
 }
