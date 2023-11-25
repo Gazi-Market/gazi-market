@@ -100,7 +100,7 @@ class DetailPostActivity : AppCompatActivity() {
         postDocRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    postUserUid = document.getString("nickname").toString()
+                    postUserUid = document.getString("uid").toString()
                     val title = document.getString("title")
                     val content = document.getString("content")
                     val price = document.getDouble("price")
