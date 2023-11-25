@@ -34,23 +34,15 @@ class ChatRoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeView()
-        initializeListener()
         setupRecycler()
 
     }
 
     private fun initializeView() {
         firebaseDatabase = FirebaseDatabase.getInstance().getReference("ChatRoom")!!
-        btnAddchatRoom = binding.btnNewMessage
         recycler_chatroom = binding.recyclerChatrooms
     }
 
-    private fun initializeListener() {
-        btnAddchatRoom.setOnClickListener {
-            startActivity(Intent(requireContext(), AddChatRoomActivity::class.java))
-            requireActivity().finish()
-        }
-    }
 
     private fun setupRecycler() {
         recycler_chatroom.layoutManager = LinearLayoutManager(requireContext())
