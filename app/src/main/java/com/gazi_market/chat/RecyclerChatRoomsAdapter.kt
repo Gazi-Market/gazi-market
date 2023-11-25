@@ -67,6 +67,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
 
                     // 각 채팅방에 대해 메시지를 가져오는 함수 호출
                     loadMessagesForChatRoom(document.id, chatRoom)
+
                 }
                 notifyDataSetChanged()
             }
@@ -91,6 +92,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
                 // 각 채팅방의 messages 필드 업데이트
                 chatRoom.messages = messages
                 notifyDataSetChanged()
+
             }
             .addOnFailureListener { exception ->
                 // 실패 시 처리
@@ -111,7 +113,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
-                    holder.chatRoomKey = chatRoomKeys[position]  // Assuming chatRoomKeys is a list of keys
+                    holder.chatRoomKey = chatRoomKeys[position]
                     holder.opponentUser = document.toObject(User::class.java)
                     holder.txt_name.text = holder.opponentUser.name.toString()
 
