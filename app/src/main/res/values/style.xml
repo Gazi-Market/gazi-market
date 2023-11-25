@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="PopupMenuStyle" parent="@style/Widget.AppCompat.PopupMenu">
+        <item name="android:textColor">#A6A6A6</item> <!-- 텍스트 색상 설정 -->
+        <item name="android:textSize">13sp</item> <!-- 텍스트 크기 설정 -->
+    </style>
+</resources>

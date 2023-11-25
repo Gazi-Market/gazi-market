@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_edit"
+        android:title="판매글 수정하기"
+        android:icon="@drawable/update_btn" /> <!-- 수정 아이콘을 넣으려면 해당 아이콘 리소스로 수정 -->
+    <item
+        android:id="@+id/menu_mark_sold"
+        android:title="판매완료로 변경"
+        android:icon="@drawable/change_to_sold_out" /> <!-- 판매완료 아이콘을 넣으려면 해당 아이콘 리소스로 수정 -->
+</menu>
