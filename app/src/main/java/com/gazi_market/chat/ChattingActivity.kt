@@ -109,9 +109,12 @@ class ChattingActivity : AppCompatActivity() {
     fun setupChatRoomKey() {
         db.collection("chatRoom")
             .whereEqualTo("users.${opponentUser.uid}", true) // 상대방의 Uid가 포함된 목록이 있는지 확인
+            .whereEqualTo("users.${myUid}", true)
             .get()
             .addOnSuccessListener { documents ->
+
                 for (document in documents) {
+                    Log.d("setupChatRoomKey", "${chatRoomKey} is ${document.id}")
                     chatRoomKey = document.id // chatRoomKey 초기화
                     setupRecycler() // 목록 업데이트
                     break

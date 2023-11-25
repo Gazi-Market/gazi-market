@@ -14,11 +14,11 @@
         android:layout_height="wrap_content"
         android:autoLink="web"
         android:background="@drawable/message_background"
-        android:gravity="start|center_vertical"
+        android:gravity="center_vertical|center"
         android:linksClickable="true"
         android:padding="10dp"
         android:text="안녕하세요."
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
