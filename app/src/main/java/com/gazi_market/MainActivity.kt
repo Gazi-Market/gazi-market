@@ -7,6 +7,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.gazi_market.chat.ChatRoomFragment
 import com.gazi_market.databinding.ActivityMainBinding
+import com.gazi_market.myPage.MyPageFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +27,12 @@ class MainActivity : AppCompatActivity() {
                         .commit()
                     return@setOnItemSelectedListener true
                 }
-                R.id.my_page -> replaceFragment(MyPage())
+                R.id.my_page -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.frameLayout, MyPageFragment())
+                        .commit()
+                    return@setOnItemSelectedListener true
+                }
             }
             true
         }

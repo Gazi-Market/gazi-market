@@ -44,19 +44,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/txt_TItle" />
 
-    <Button
-        android:id="@+id/btn_signout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:background="@android:color/transparent"
-        android:text="로그아웃"
-        android:textColor="#8D8D8E"
-        android:textSize="18dp"
-        android:textStyle="normal"
-        app:layout_constraintBottom_toBottomOf="@+id/txt_TItle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txt_TItle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_chatrooms"
