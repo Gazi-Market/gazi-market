@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.gazi_market.databinding.ActivityDetailPostBinding
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 class DetailPostActivity : AppCompatActivity() {
 
@@ -36,6 +39,23 @@ class DetailPostActivity : AppCompatActivity() {
                     val isSoldOut = document.getBoolean("soldOut") // TODO: 수정 필요
                     val createdAt = document.getTimestamp("createdAt")
                     val formattedDate = createdAt?.toDate()?.let { getTimeAgo(it.time) }
+                    val imageURL = document.getString("image")
+
+                    if (!imageURL.isNullOrEmpty()) {
+                        // Firebase Storage에서 이미지 다운로드 URL 생성
+                        val storageReference = Firebase.storage.reference
+                        storageReference.child(imageURL).downloadUrl
+                            .addOnSuccessListener { uri ->
+                                Glide.with(this)
+                                    .load(uri)
+                                    .into(binding.productImageView)
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.e(TAG, "이미지 다운로드 실패: $exception")
+                            }
+                    } else {
+                        // imageURL이 없을 때 처리 (기본 이미지 표시 등)
+                    }
 
                     // 데이터가 null이 아닌지 확인 후 TextView에 설정
                     findViewById<TextView>(R.id.nicknameTextView).text =
