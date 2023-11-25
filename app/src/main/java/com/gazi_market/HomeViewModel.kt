@@ -35,14 +35,14 @@ class HomeViewModel : ViewModel() {
     }
 
     fun loadAllItems() {
-        TODO("Not yet implemented")
+        _saleItems.value = allSaleItems
     }
 
     fun loadSaleItems() {
-        TODO("Not yet implemented")
+        _saleItems.value = allSaleItems.filter { !it.soldOut }
     }
 
     fun loadSoldOutItems() {
-        TODO("Not yet implemented")
+        _saleItems.value = allSaleItems.filter { it.soldOut }
     }
 }
