@@ -24,7 +24,6 @@
         <activity android:name=".account.LoginActivity" />
         <activity android:name=".account.SignupActivity" />
         <activity android:name=".account.SignUpOkActivity" />
-        <activity android:name=".chat.ChatRoomActivity" />
         <activity android:name=".chat.ChattingActivity" />
         <activity android:name=".chat.AddChatRoomActivity" />
         <activity
