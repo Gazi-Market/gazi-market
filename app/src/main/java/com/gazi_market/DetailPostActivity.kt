@@ -155,7 +155,7 @@ class DetailPostActivity : AppCompatActivity() {
             }
 
         binding.registerBtn.setOnClickListener {
-            addChatRoom()
+            addChatRoom(documentId)
         }
     }
 
@@ -200,12 +200,12 @@ class DetailPostActivity : AppCompatActivity() {
                 // 실패 시 처리
             }
     }
-    fun addChatRoom() {
+    fun addChatRoom(documentId : String) {
         val user = Firebase.auth.currentUser
         val chatRoom = ChatRoom(mapOf(
             user?.uid!! to true,
-            postUser.uid!! to true
-        ), null)
+            postUser.uid!! to true,
+        ), null, documentId)
 
         db.collection("chatRoom")
             .whereEqualTo("users.${user?.uid}", true)

@@ -1,14 +1,17 @@
 package com.gazi_market.chat
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.gazi_market.R
 import com.gazi_market.databinding.ListChatroomItemBinding
 import com.gazi_market.model.ChatRoom
@@ -23,6 +26,7 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.TimeZone
@@ -185,12 +189,50 @@ class RecyclerChatRoomsAdapter(val context: Context) :
             var lastMessage =
                 chatRooms[position].messages!!.values.sortedWith(compareBy { it.sended_date })    //메시지 목록에서 시각을 비교하여 가장 마지막 메시지  가져오기
                     .last()
+
+            // 이미지를 가져오기
+            setUpImage(holder, chatRooms[position].postId)
+
             holder.txt_message.text = lastMessage.content                 //마지막 메시지 표시
             holder.txt_date.text = getLastMessageTimeString(lastMessage.sended_date)   //마지막으로 전송된 시각 표시
             Log.d("room Test", "${lastMessage.content} ${getLastMessageTimeString(lastMessage.sended_date)}")
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun setUpImage(holder: ViewHolder, documentId : String){
+        val docRef = db.collection("posts").document(documentId)
+
+        // 문서 가져오기
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val imageURL = document.getString("image")
+
+                    if (!imageURL.isNullOrEmpty()) {
+                        // Firebase Storage에서 이미지 다운로드 URL 생성
+                        val storageReference = Firebase.storage.reference
+                        storageReference.child(imageURL).downloadUrl
+                            .addOnSuccessListener { uri ->
+                                Glide.with(holder.itemView.context)
+                                    .load(uri)
+                                    .into(holder.post_image)
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.e(ContentValues.TAG, "이미지 다운로드 실패: $exception")
+                            }
+                    } else {
+                        // imageURL이 없을 때 처리 (기본 이미지 표시 등)
+                    }
+
+                } else {
+                    Log.d(ContentValues.TAG, "No such document")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(ContentValues.TAG, "get failed with ", exception)
+            }
     }
 
     fun setupMessageCount(holder: ViewHolder, position: Int) {            //확인되지 않은 메시지 개수 표시
@@ -271,6 +313,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
         var txt_message = itemView.txtMessage
         var txt_date = itemView.txtMessageDate
         var txt_chatCount = itemView.txtChatCount
+        var post_image = itemView.postImage
     }
 
 }
