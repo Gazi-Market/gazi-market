@@ -7,16 +7,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.TextView
-import com.gazi_market.chat.AddChatRoomActivity
 import com.gazi_market.chat.ChattingActivity
 import com.bumptech.glide.Glide
 import com.gazi_market.databinding.ActivityDetailPostBinding
-import com.google.firebase.auth.FirebaseAuth
 import com.gazi_market.model.ChatRoom
 import com.gazi_market.model.User
 import com.google.firebase.auth.FirebaseAuth
@@ -33,7 +28,6 @@ class DetailPostActivity : AppCompatActivity() {
     lateinit var binding: ActivityDetailPostBinding
     lateinit var myUid: String
     lateinit var postUser: User
-  
     private val db : FirebaseFirestore = Firebase.firestore
 
 
@@ -191,7 +185,7 @@ class DetailPostActivity : AppCompatActivity() {
         val user = Firebase.auth.currentUser
 
         db.collection("users")
-            .document(nickname)
+            .document(myUid)// TODO: 여기 원래 nickname 이였음
             .get()
             .addOnSuccessListener { result ->
                 postUser = result.toObject(User::class.java)!!
