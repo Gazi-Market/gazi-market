@@ -1,6 +1,7 @@
 package com.gazi_market
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -34,6 +35,12 @@ class Home : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         binding.btnFilter.setOnClickListener { showFilterOptions() }
+
+        binding.postBtn.setOnClickListener {
+            val intent = Intent(requireContext(), PostActivity::class.java)
+            startActivity(intent)
+        }
+
         recyclerViewSaleItem = binding.recyclerView
         tvTitle = binding.tvTitle
 

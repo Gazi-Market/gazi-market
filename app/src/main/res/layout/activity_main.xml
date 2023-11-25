@@ -15,15 +15,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/postBtn"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="340dp"
-            android:layout_marginTop="550dp"
-            android:background="@drawable/register_post"
-            android:padding="32dp" />
-
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
