@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gazi_market.R
 import com.gazi_market.account.LoginActivity
-import com.gazi_market.chat.AddChatRoomActivity
 import com.gazi_market.chat.RecyclerChatRoomsAdapter
 import com.gazi_market.databinding.ChatRoomLayoutBinding
 import com.gazi_market.databinding.FragmentMyPageBinding

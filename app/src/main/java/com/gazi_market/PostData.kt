@@ -9,7 +9,7 @@ data class PostData(
     val createdAt: Date,
     val image: String,
     val soldOut: Boolean,
-    val nickname: String,
+    val uid: String,
     val price: Int,
     val title: String
 ) {

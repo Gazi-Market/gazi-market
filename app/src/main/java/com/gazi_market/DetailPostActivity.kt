@@ -26,9 +26,9 @@ import android.view.ContextThemeWrapper
 class DetailPostActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityDetailPostBinding
-    lateinit var myUid: String
     lateinit var postUser: User
     private val db : FirebaseFirestore = Firebase.firestore
+    lateinit var postUserUid : String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,7 +89,6 @@ class DetailPostActivity : AppCompatActivity() {
 
 
         val db = FirebaseFirestore.getInstance()
-        myUid = FirebaseAuth.getInstance().currentUser?.uid!!
 
         // documentId 가져오기
         val documentId = intent.getStringExtra("documentId").toString() ?: ""
@@ -97,20 +96,11 @@ class DetailPostActivity : AppCompatActivity() {
         // posts 컬렉션에서 documentId에 해당하는 문서 참조 가져오기
         val postDocRef = db.collection("posts").document(documentId)
 
-        // users 컬렉션에서 myUid에 해당하는 문서 참조 가져오기
-        val userDocRef = db.collection("users").document(myUid)
-
-        userDocRef.get()
-            .addOnSuccessListener { document ->
-                val nickname = document.getString("name")
-
-                findViewById<TextView>(R.id.nicknameTextView).text =
-                    nickname ?: "Nickname is null"
-            }
         // 문서 가져오기
         postDocRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
+                    postUserUid = document.getString("nickname").toString()
                     val title = document.getString("title")
                     val content = document.getString("content")
                     val price = document.getDouble("price")
@@ -185,7 +175,7 @@ class DetailPostActivity : AppCompatActivity() {
         val user = Firebase.auth.currentUser
 
         db.collection("users")
-            .document(myUid)// TODO: 여기 원래 nickname 이였음
+            .document(postUserUid)
             .get()
             .addOnSuccessListener { result ->
                 postUser = result.toObject(User::class.java)!!

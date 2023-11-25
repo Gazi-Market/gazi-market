@@ -64,14 +64,14 @@ class PostActivity : AppCompatActivity() {
             val postsCollection = db.collection("posts")
             val newDocumentRef = postsCollection.document()
 
-            val nickname = FirebaseAuth.getInstance().currentUser?.uid!!.toString()
+            val uid = FirebaseAuth.getInstance().currentUser?.uid!!.toString()
 
             if(selectedImageUri!=null){
                 selectedImageUri?.let { uri ->
                     uploadImageToFirebaseStorage(uri) { imageName ->
                         val postData = PostData(
                             documentId = newDocumentRef.id,
-                            nickname = nickname,
+                            uid = uid,
                             title = title,
                             content = content,
                             price = price,
