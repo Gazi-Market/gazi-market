@@ -1,12 +1,17 @@
 package com.gazi_market
 
 import java.sql.Timestamp
+import java.util.Date
 
 data class PostData(
-    val nickname: String,
-    val title: String,
+    val documentId: String,
     val content: String,
-    val price: Int,
+    val createdAt: Date,
+    val image: String,
     val isSoldOut: Boolean,
-    val createdAt: Timestamp
-)
+    val nickname: String,
+    val price: Int,
+    val title: String
+) {
+    constructor() : this("","", Timestamp(Date().time), "", false, "", 0, "")
+}
