@@ -41,14 +41,14 @@ class DetailPostActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+        documentId = intent.getStringExtra("documentId").toString()
         binding.imgBtnBack.setOnClickListener { onBackPressed() }
-        binding.registerBtn.setOnClickListener { addChatRoom(documentId) }
+        binding.registerBtn.setOnClickListener { addChatRoom() }
         binding.productImageView.setOnClickListener { openImageZoomActivity() }
         setupPopupMenu()
     }
 
     private fun loadPostData() {
-        val documentId = intent.getStringExtra("documentId") ?: return
         val postDocRef = db.collection("posts").document(documentId)
 
         postDocRef.get().addOnSuccessListener { document ->
@@ -129,7 +129,6 @@ class DetailPostActivity : AppCompatActivity() {
                     }
 
                     R.id.menu_edit -> {
-                        val documentId = intent.getStringExtra("documentId").toString()
                         val editIntent = Intent(this, EditPostActivity::class.java)
                         editIntent.putExtra("documentId", documentId)
                         startActivity(editIntent)
@@ -145,8 +144,6 @@ class DetailPostActivity : AppCompatActivity() {
 
     private fun toggleSoldOutStatus() {
         val newStatus = !isSoldOut
-        val documentId = intent.getStringExtra("documentId").toString()
-
         db.collection("posts").document(documentId).update("soldOut", newStatus)
             .addOnSuccessListener {
                 isSoldOut = newStatus
@@ -177,7 +174,6 @@ class DetailPostActivity : AppCompatActivity() {
     }
 
     private fun editPost() {
-        val documentId = intent.getStringExtra("documentId") ?: return
         val editIntent = Intent(this, EditPostActivity::class.java).apply {
             putExtra("documentId", documentId)
         }
@@ -212,7 +208,7 @@ class DetailPostActivity : AppCompatActivity() {
         }
     }
 
-    private fun addChatRoom(documentId: String) {
+    private fun addChatRoom() {
         val user = Firebase.auth.currentUser ?: return
         val otherUserId = postUser.uid ?: return
         val chatRoom = ChatRoom(mapOf(user.uid to true, otherUserId to true), null, documentId)
