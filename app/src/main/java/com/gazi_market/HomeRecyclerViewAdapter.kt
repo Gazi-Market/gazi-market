@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.Firebase
 import com.google.firebase.storage.storage
+import java.text.NumberFormat
+import java.util.Locale
 
 class HomeRecyclerViewAdapter(var context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -47,7 +49,7 @@ class HomeRecyclerViewAdapter(var context: Context) :
 
         viewHolder.apply {
             tvPostTitle.text = postData.title
-            tvPrice.text = if (postData.soldOut) "판매 완료" else "${postData.price}원"
+            tvPrice.text = getPriceString(postData)
         }
 
         holder.itemView.setOnClickListener {
@@ -58,12 +60,23 @@ class HomeRecyclerViewAdapter(var context: Context) :
             holder.itemView.context.startActivity(intent)
         }
 
-        if (postData.image.isNullOrEmpty()) {
+        if (postData.image.isEmpty()) {
             Log.e("HomeRecyclerViewAdapter", postData.documentId + " cannot found image")
             return
         }
         Firebase.storage.reference.child(postData.image).downloadUrl.addOnSuccessListener { uri ->
             Glide.with(context).load(uri.toString()).into(holder.imageView)
+        }
+    }
+
+    private fun getPriceString(postData: PostData): String {
+        if (postData.soldOut) return "판매 완료"
+        return postData.price.let {
+            val priceFormat = NumberFormat.getNumberInstance(Locale.KOREA)
+            when {
+                it >= 10000 -> "${priceFormat.format(it / 10000)}만원"
+                else -> "${priceFormat.format(it)}원"
+            }
         }
     }
 }
