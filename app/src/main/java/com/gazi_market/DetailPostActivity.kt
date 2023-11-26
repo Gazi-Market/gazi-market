@@ -105,26 +105,19 @@ class DetailPostActivity : AppCompatActivity() {
         postDocRef.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
                 postUserUid = document.getString("uid").toString()
+                isSoldOut = document.getBoolean("soldOut") ?: false
+                imageURL = document.getString("image") ?: "/image/logo.png"
+                updatePopupMenu(isSoldOut)
                 val title = document.getString("title")
                 val content = document.getString("content")
                 val price = document.getDouble("price")
-                isSoldOut = document.getBoolean("soldOut") ?: false
-                updatePopupMenu(isSoldOut)
                 val createdAt = document.getTimestamp("createdAt")
                 val formattedDate = createdAt?.toDate()?.let { getTimeAgo(it.time) }
-                imageURL = document.getString("image")
-
-                if (!imageURL.isNullOrEmpty()) {
-                    val storageReference = Firebase.storage.reference
-                    storageReference.child(imageURL!!).downloadUrl.addOnSuccessListener { uri ->
-                        Glide.with(this).load(uri).into(binding.productImageView)
-                    }.addOnFailureListener { exception ->
-                        Log.e(TAG, "이미지 다운로드 실패: $exception")
-                    }
-                }
-                // imageURL이 없을 때 처리 (기본 이미지 표시 등)
-                else {
-
+                val storageReference = Firebase.storage.reference
+                storageReference.child(imageURL!!).downloadUrl.addOnSuccessListener { uri ->
+                    Glide.with(this).load(uri).into(binding.productImageView)
+                }.addOnFailureListener { exception ->
+                    Log.e(TAG, "이미지 다운로드 실패: $exception")
                 }
 
                 // 데이터가 null이 아닌지 확인 후 TextView에 설정
