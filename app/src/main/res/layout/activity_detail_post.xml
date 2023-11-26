@@ -28,10 +28,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:fontFamily="@font/pretendard_bold"
             android:text="게시글 상세 조회"
             android:textColor="#000000"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/img_btn_etc"
@@ -65,7 +65,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_launcher_background" />
+                app:srcCompat="@drawable/img_background" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"
@@ -94,6 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:fontFamily="@font/pretendard_regular"
                 android:text="TextView"
                 android:textColor="#000000"
                 android:textSize="18sp"
@@ -106,6 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:fontFamily="@font/pretendard_light"
                 android:text="TextView"
                 android:textColor="#A6A6A6"
                 android:textSize="10sp"
@@ -118,6 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
+                android:fontFamily="@font/pretendard_regular"
                 android:text="TextView"
                 android:textColor="#000000"
                 android:textSize="20sp"
@@ -130,6 +133,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="24dp"
+                android:fontFamily="@font/pretendard_regular"
                 android:text="TextView"
                 android:textColor="#000000"
                 android:textSize="15sp"
@@ -166,6 +170,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:fontFamily="@font/pretendard_regular"
         android:text="0원"
         android:textColor="#444444"
         android:textSize="18sp"
@@ -181,6 +186,7 @@
         android:layout_height="40dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/round_btn"
+        android:fontFamily="@font/pretendard_medium"
         android:text="채팅하기"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
