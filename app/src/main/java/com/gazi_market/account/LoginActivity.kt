@@ -3,6 +3,8 @@ package com.gazi_market.account
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -39,6 +41,35 @@ class LoginActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             signIn(id.text.toString(),pwd.text.toString())
         }
+
+        // 초기에 버튼 비활성화
+        loginButton.isEnabled = false
+
+        // EditText 변경을 감지하여 버튼 상태 업데이트
+        id.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                updateLoginButtonState(loginButton, id.text.toString(), pwd.text.toString())
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        pwd.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                updateLoginButtonState(loginButton, id.text.toString(), pwd.text.toString())
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    private fun updateLoginButtonState(loginButton: Button, email: String, password: String) {
+        // 두 필드가 모두 비어있지 않을 때만 버튼 활성화
+        loginButton.isEnabled = email.isNotEmpty() && password.isNotEmpty()
     }
 
     // 로그아웃하지 않을 시 자동 로그인 , 회원가입시 바로 로그인 됨

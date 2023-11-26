@@ -31,15 +31,11 @@ class SignUpOkActivity : AppCompatActivity() {
             if (receivedEmail != null && receivedPassword != null) {
                 signIn(receivedEmail, receivedPassword)
             }
-
         }
-
-
     }
 
     // 로그인
     private fun signIn(email: String, password: String) {
-
         if (email.isNotEmpty() && password.isNotEmpty()) {
             auth?.signInWithEmailAndPassword(email, password)
                 ?.addOnCompleteListener(this) { task ->
@@ -65,6 +61,5 @@ class SignUpOkActivity : AppCompatActivity() {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
-
     }
 }

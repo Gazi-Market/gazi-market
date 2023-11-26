@@ -1,6 +1,5 @@
 package com.gazi_market.account
 
-import android.R.attr
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -11,7 +10,6 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -19,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.gazi_market.R
 import com.gazi_market.StartActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -47,16 +44,15 @@ class SignupActivity : AppCompatActivity() {
         val signupNickName = findViewById<EditText>(R.id.nickName)
 
         val signupButton = findViewById<Button>(R.id.signup_okButton)
+        signupButton.isEnabled = false
+        signupButton.setTextColor(Color.GRAY)
 
         var isID = false
         var isPWD = false
         var isPWD2 = false
 
         val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 // 밑에 나올 텍스트
                 val checkID = findViewById<TextView>(R.id.checkID)
@@ -100,7 +96,6 @@ class SignupActivity : AppCompatActivity() {
                     checkPWD.setTextColor(Color.parseColor("#009B00"))
                     checkPWD.visibility = View.VISIBLE
                     isPWD = true
-
                 }
 
                 if(pwdCheck.isEmpty()){
@@ -118,8 +113,8 @@ class SignupActivity : AppCompatActivity() {
                     isPWD2 = true
                 }
 
-                signupButton.isEnabled = isID && isPWD && isPWD2 && nickName.isNotEmpty()
-
+                signupButton.isEnabled = isID && isPWD && isPWD2 && signupNickName.text.isNotEmpty()
+                signupButton.setTextColor(if (signupButton.isEnabled) Color.BLACK else Color.GRAY)
             }
 
             override fun afterTextChanged(p0: Editable?) {

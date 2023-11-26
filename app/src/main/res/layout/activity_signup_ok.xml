@@ -6,15 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="220dp"
         android:text="회원가입 완료"
-        android:textSize="25sp"
-        android:textStyle="bold"
+        android:textColor="#000000"
+        android:textSize="22sp"
+        android:fontFamily="@font/pretendard_regular"
         app:layout_constraintBottom_toTopOf="@+id/productImageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -36,16 +36,15 @@
 
     <Button
         android:id="@+id/login"
-        android:layout_width="329dp"
-        android:layout_height="52dp"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="80dp"
-        android:background="@drawable/custom_start_button"
+        android:background="@drawable/round_btn"
         android:text="시작하기"
         android:textColor="#FFFFFF"
+        android:fontFamily="@font/pretendard_regular"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
