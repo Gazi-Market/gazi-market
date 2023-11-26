@@ -44,64 +44,14 @@ class DetailPostActivity : AppCompatActivity() {
         etcBtn.setOnClickListener {
             val popupMenu = PopupMenu(ContextThemeWrapper(this, R.style.PopupMenuStyle), etcBtn)
             popupMenu.menuInflater.inflate(R.menu.post_detail_menu, popupMenu.menu)
-
-            // 아이콘 보이게 하기
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                popupMenu.setForceShowIcon(true)
-            } else {
-                try {
-                    val fields = popupMenu.javaClass.declaredFields
-                    for (field in fields) {
-                        if ("mPopup" == field.name) {
-                            field.isAccessible = true
-                            val menuPopupHelper = field.get(popupMenu)
-                            val classPopupHelper = Class.forName(menuPopupHelper.javaClass.name)
-                            val setForceIcons =
-                                classPopupHelper.getMethod("setForceShowIcon", Boolean::class.java)
-                            setForceIcons.invoke(menuPopupHelper, true)
-                            break
-                        }
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-
-            // 팝업 메뉴 아이템 클릭 이벤트 처리
-            popupMenu.setOnMenuItemClickListener { menuItem ->
-                val documentId = intent.getStringExtra("documentId").toString()
-                when (menuItem.itemId) {
-//                    R.id.menu_edit -> {
-//                        // "판매글 수정하기" 클릭 시
-//                        val editIntent = Intent(this, EditPostActivity::class.java)
-//                        editIntent.putExtra("documentId", documentId)
-//                        startActivity(editIntent)
-//                        return@setOnMenuItemClickListener true
-//                    }
-
-                    R.id.menu_mark_sold -> {
-                        val document = db.collection("posts").document(documentId)
-                        document.update("soldOut", true)
-                        return@setOnMenuItemClickListener true
-                    }
-
-                    else -> return@setOnMenuItemClickListener false
-                }
-            }
-
+            popupMenu.setForceShowIcon(true)
             popupMenu.show()
         }
 
-
         val db = FirebaseFirestore.getInstance()
-
-        // documentId 가져오기
         val documentId = intent.getStringExtra("documentId").toString() ?: ""
-
-        // posts 컬렉션에서 documentId에 해당하는 문서 참조 가져오기
         val postDocRef = db.collection("posts").document(documentId)
 
-        // 문서 가져오기
         postDocRef.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
                 postUserUid = document.getString("uid").toString()
@@ -154,14 +104,8 @@ class DetailPostActivity : AppCompatActivity() {
             val popupMenu = PopupMenu(ContextThemeWrapper(this, R.style.PopupMenuStyle), etcBtn)
             popupMenu.menuInflater.inflate(R.menu.post_detail_menu, popupMenu.menu)
 
-            // 판매 상태에 따라 메뉴 항목 변경
-            popupMenu.menu.findItem(R.id.menu_mark_sold).title = if (isSoldOut) {
-                "판매중으로 변경"
-            } else {
-                "판매완료로 변경"
-            }
-
-            // ...[기존 팝업 메뉴 설정 코드]...
+            val titleString = if (isSoldOut) "판매중으로 변경" else "판매완료로 변경"
+            popupMenu.menu.findItem(R.id.menu_mark_sold).title = titleString
 
             popupMenu.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
@@ -172,6 +116,10 @@ class DetailPostActivity : AppCompatActivity() {
                     }
 
                     R.id.menu_edit -> {
+                        val documentId = intent.getStringExtra("documentId").toString()
+                        val editIntent = Intent(this, EditPostActivity::class.java)
+                        editIntent.putExtra("documentId", documentId)
+                        startActivity(editIntent)
                         return@setOnMenuItemClickListener true
                     }
 
@@ -276,9 +224,8 @@ class DetailPostActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val intent = Intent(this, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
     }
