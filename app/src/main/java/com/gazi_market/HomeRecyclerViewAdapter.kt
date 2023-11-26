@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.Firebase
 import com.google.firebase.storage.storage
+import java.text.NumberFormat
+import java.util.Locale
 
 class HomeRecyclerViewAdapter(var context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -47,7 +49,15 @@ class HomeRecyclerViewAdapter(var context: Context) :
 
         viewHolder.apply {
             tvPostTitle.text = postData.title
-            tvPrice.text = if (postData.soldOut) "판매 완료" else "${postData.price}원"
+            tvPrice.text = if (postData.soldOut) "판매 완료" else // 100만원 이상은 단위를 만원으로 표시
+                if (postData.price >= 1000000) {
+                    val price = postData.price / 10000
+                    val priceFormat = NumberFormat.getNumberInstance(Locale.KOREA).format(price)
+                    "${priceFormat}만원"
+                } else {
+                    val priceFormat = NumberFormat.getNumberInstance(Locale.KOREA).format(postData.price)
+                    "${priceFormat}원"
+                }
         }
 
         holder.itemView.setOnClickListener {
