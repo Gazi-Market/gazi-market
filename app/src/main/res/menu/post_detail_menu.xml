@@ -2,11 +2,9 @@
     <item
         android:id="@+id/menu_edit"
         android:title="판매글 수정하기"
-        android:icon="@drawable/update_btn"
-        android:drawablePadding="8dp" /> <!-- 아이콘과 텍스트 사이의 간격 설정 -->
+        android:icon="@drawable/update_btn"/>
     <item
         android:id="@+id/menu_mark_sold"
         android:title="판매완료로 변경"
-        android:icon="@drawable/change_to_sold_out"
-        android:drawablePadding="8dp" /> <!-- 아이콘과 텍스트 사이의 간격 설정 -->
+        android:icon="@drawable/change_to_sold_out"/>
 </menu>

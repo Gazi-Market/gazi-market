@@ -217,6 +217,7 @@ class RecyclerChatRoomsAdapter(val context: Context) :
                             .addOnSuccessListener { uri ->
                                 Glide.with(holder.itemView.context)
                                     .load(uri)
+                                    .circleCrop()
                                     .into(holder.post_image)
                             }
                             .addOnFailureListener { exception ->

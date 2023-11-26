@@ -61,7 +61,7 @@ class DetailPostActivity : AppCompatActivity() {
             postUserUid = document.getString("uid").toString()
             isSoldOut = document.getBoolean("soldOut") ?: false
             imageURL = document.getString("image") ?: "/image/logo.png"
-
+            
             if (Firebase.auth.currentUser?.uid == postUserUid)
                 binding.registerBtn.visibility = View.GONE
             else binding.imgBtnEtc.visibility = View.GONE
