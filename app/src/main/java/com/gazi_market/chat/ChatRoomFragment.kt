@@ -18,7 +18,6 @@ import com.google.firebase.database.*
 
 class ChatRoomFragment : Fragment() {
 
-    private lateinit var btnAddchatRoom: Button
     private lateinit var binding: ChatRoomLayoutBinding
     private lateinit var firebaseDatabase: DatabaseReference
     private lateinit var recycler_chatroom: RecyclerView
