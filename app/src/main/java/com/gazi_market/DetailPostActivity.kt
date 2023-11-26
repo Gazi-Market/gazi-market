@@ -29,6 +29,7 @@ class DetailPostActivity : AppCompatActivity() {
     lateinit var postUser: User
     private val db : FirebaseFirestore = Firebase.firestore
     lateinit var postUserUid : String
+    private var imageURL: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,11 +108,11 @@ class DetailPostActivity : AppCompatActivity() {
                     val isSoldOut = document.getBoolean("soldOut") // TODO: 수정 필요
                     val createdAt = document.getTimestamp("createdAt")
                     val formattedDate = createdAt?.toDate()?.let { getTimeAgo(it.time) }
-                    val imageURL = document.getString("image")
+                    imageURL = document.getString("image")
 
                     if (!imageURL.isNullOrEmpty()) {
                         val storageReference = Firebase.storage.reference
-                        storageReference.child(imageURL).downloadUrl
+                        storageReference.child(imageURL!!).downloadUrl
                             .addOnSuccessListener { uri ->
                                 Glide.with(this)
                                     .load(uri)
@@ -146,6 +147,12 @@ class DetailPostActivity : AppCompatActivity() {
 
         binding.registerBtn.setOnClickListener {
             addChatRoom(documentId)
+        }
+
+        binding.productImageView.setOnClickListener {
+            val intent = Intent(this, ImageZoomActivity::class.java)
+            intent.putExtra("imageURL", imageURL) // 이미지 URL 전달
+            startActivity(intent)
         }
     }
 

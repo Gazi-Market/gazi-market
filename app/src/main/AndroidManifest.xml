@@ -25,7 +25,7 @@
         <activity android:name=".account.SignupActivity" />
         <activity android:name=".account.SignUpOkActivity" />
         <activity android:name=".chat.ChattingActivity" />
-        <activity android:name=".chat.AddChatRoomActivity" />
+        <activity android:name=".ImageZoomActivity" />
         <activity
             android:name=".StartActivity"
             android:exported="true" >
