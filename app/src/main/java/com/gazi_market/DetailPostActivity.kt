@@ -27,10 +27,10 @@ class DetailPostActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityDetailPostBinding
     lateinit var postUser: User
-    private val db : FirebaseFirestore = Firebase.firestore
-    lateinit var postUserUid : String
+    private val db: FirebaseFirestore = Firebase.firestore
+    lateinit var postUserUid: String
     private var imageURL: String? = null
-
+    private var isSoldOut: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +48,7 @@ class DetailPostActivity : AppCompatActivity() {
             popupMenu.menuInflater.inflate(R.menu.post_detail_menu, popupMenu.menu)
 
             // 아이콘 보이게 하기
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 popupMenu.setForceShowIcon(true)
             } else {
                 try {
@@ -58,7 +58,8 @@ class DetailPostActivity : AppCompatActivity() {
                             field.isAccessible = true
                             val menuPopupHelper = field.get(popupMenu)
                             val classPopupHelper = Class.forName(menuPopupHelper.javaClass.name)
-                            val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.java)
+                            val setForceIcons =
+                                classPopupHelper.getMethod("setForceShowIcon", Boolean::class.java)
                             setForceIcons.invoke(menuPopupHelper, true)
                             break
                         }
@@ -70,17 +71,22 @@ class DetailPostActivity : AppCompatActivity() {
 
             // 팝업 메뉴 아이템 클릭 이벤트 처리
             popupMenu.setOnMenuItemClickListener { menuItem ->
+                val documentId = intent.getStringExtra("documentId").toString()
                 when (menuItem.itemId) {
-                    R.id.menu_edit -> {
-                        // "판매글 수정하기" 클릭 시 할 동작 구현
-                        // 예시: 수정 화면으로 이동하거나 해당 기능 실행
-                        return@setOnMenuItemClickListener true
-                    }
+//                    R.id.menu_edit -> {
+//                        // "판매글 수정하기" 클릭 시
+//                        val editIntent = Intent(this, EditPostActivity::class.java)
+//                        editIntent.putExtra("documentId", documentId)
+//                        startActivity(editIntent)
+//                        return@setOnMenuItemClickListener true
+//                    }
+
                     R.id.menu_mark_sold -> {
-                        // "판매완료로 변경" 클릭 시 할 동작 구현
-                        // 예시: 상태 변경 작업 수행 또는 해당 기능 실행
+                        val document = db.collection("posts").document(documentId)
+                        document.update("soldOut", true)
                         return@setOnMenuItemClickListener true
                     }
+
                     else -> return@setOnMenuItemClickListener false
                 }
             }
@@ -98,52 +104,47 @@ class DetailPostActivity : AppCompatActivity() {
         val postDocRef = db.collection("posts").document(documentId)
 
         // 문서 가져오기
-        postDocRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    postUserUid = document.getString("uid").toString()
-                    val title = document.getString("title")
-                    val content = document.getString("content")
-                    val price = document.getDouble("price")
-                    val isSoldOut = document.getBoolean("soldOut") // TODO: 수정 필요
-                    val createdAt = document.getTimestamp("createdAt")
-                    val formattedDate = createdAt?.toDate()?.let { getTimeAgo(it.time) }
-                    imageURL = document.getString("image")
+        postDocRef.get().addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                postUserUid = document.getString("uid").toString()
+                val title = document.getString("title")
+                val content = document.getString("content")
+                val price = document.getDouble("price")
+                isSoldOut = document.getBoolean("soldOut") ?: false
+                updatePopupMenu(isSoldOut)
+                val createdAt = document.getTimestamp("createdAt")
+                val formattedDate = createdAt?.toDate()?.let { getTimeAgo(it.time) }
+                imageURL = document.getString("image")
 
-                    if (!imageURL.isNullOrEmpty()) {
-                        val storageReference = Firebase.storage.reference
-                        storageReference.child(imageURL!!).downloadUrl
-                            .addOnSuccessListener { uri ->
-                                Glide.with(this)
-                                    .load(uri)
-                                    .into(binding.productImageView)
-                            }
-                            .addOnFailureListener { exception ->
-                                Log.e(TAG, "이미지 다운로드 실패: $exception")
-                            }
+                if (!imageURL.isNullOrEmpty()) {
+                    val storageReference = Firebase.storage.reference
+                    storageReference.child(imageURL!!).downloadUrl.addOnSuccessListener { uri ->
+                        Glide.with(this).load(uri).into(binding.productImageView)
+                    }.addOnFailureListener { exception ->
+                        Log.e(TAG, "이미지 다운로드 실패: $exception")
                     }
-                    // imageURL이 없을 때 처리 (기본 이미지 표시 등)
-                    else {
-
-                    }
-
-                    // 데이터가 null이 아닌지 확인 후 TextView에 설정
-                    findViewById<TextView>(R.id.titleTextView).text = title ?: "Title is null"
-                    findViewById<TextView>(R.id.contentTextView).text = content ?: "Content is null"
-                    findViewById<TextView>(R.id.createdAtTextView).text =
-                        formattedDate ?: "날짜가 없습니다"
-                    findViewById<TextView>(R.id.priceTextView).text =
-                        if (isSoldOut == true) "판매 완료" else price?.toInt().toString() + "원"
-
-                    // post를 작성한 유저 가져오기
-                    getPostUser()
-                } else {
-                    Log.d(TAG, "No such document")
                 }
+                // imageURL이 없을 때 처리 (기본 이미지 표시 등)
+                else {
+
+                }
+
+                // 데이터가 null이 아닌지 확인 후 TextView에 설정
+                findViewById<TextView>(R.id.titleTextView).text = title ?: "Title is null"
+                findViewById<TextView>(R.id.contentTextView).text = content ?: "Content is null"
+                findViewById<TextView>(R.id.createdAtTextView).text =
+                    formattedDate ?: "날짜가 없습니다"
+                findViewById<TextView>(R.id.priceTextView).text =
+                    if (isSoldOut == true) "판매 완료" else price?.toInt().toString() + "원"
+
+                // post를 작성한 유저 가져오기
+                getPostUser()
+            } else {
+                Log.d(TAG, "No such document")
             }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
+        }.addOnFailureListener { exception ->
+            Log.d(TAG, "get failed with ", exception)
+        }
 
         binding.registerBtn.setOnClickListener {
             addChatRoom(documentId)
@@ -154,6 +155,54 @@ class DetailPostActivity : AppCompatActivity() {
             intent.putExtra("imageURL", imageURL) // 이미지 URL 전달
             startActivity(intent)
         }
+    }
+
+    private fun updatePopupMenu(soldOut: Boolean) {
+        val etcBtn = findViewById<ImageView>(R.id.img_btn_etc)
+        etcBtn.setOnClickListener {
+            val popupMenu = PopupMenu(ContextThemeWrapper(this, R.style.PopupMenuStyle), etcBtn)
+            popupMenu.menuInflater.inflate(R.menu.post_detail_menu, popupMenu.menu)
+
+            // 판매 상태에 따라 메뉴 항목 변경
+            popupMenu.menu.findItem(R.id.menu_mark_sold).title = if (isSoldOut) {
+                "판매중으로 변경"
+            } else {
+                "판매완료로 변경"
+            }
+
+            // ...[기존 팝업 메뉴 설정 코드]...
+
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.menu_mark_sold -> {
+                        toggleSoldOutStatus()
+                        finish()
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.menu_edit -> {
+                        return@setOnMenuItemClickListener true
+                    }
+                    else -> return@setOnMenuItemClickListener false
+                }
+            }
+            popupMenu.show()
+        }
+    }
+
+    private fun toggleSoldOutStatus() {
+        val newStatus = !isSoldOut
+        val documentId = intent.getStringExtra("documentId").toString()
+
+        db.collection("posts").document(documentId)
+            .update("soldOut", newStatus)
+            .addOnSuccessListener {
+                isSoldOut = newStatus
+                updatePopupMenu(isSoldOut)
+                // UI 업데이트 또는 사용자에게 상태 변경 알림
+            }
+            .addOnFailureListener { e ->
+                // 오류 처리
+            }
     }
 
     private fun getTimeAgo(time: Long): String {
@@ -178,59 +227,51 @@ class DetailPostActivity : AppCompatActivity() {
         }
     }
 
-    fun getPostUser(){
+    fun getPostUser() {
         val user = Firebase.auth.currentUser
 
-        db.collection("users")
-            .document(postUserUid)
-            .get()
-            .addOnSuccessListener { result ->
-                postUser = result.toObject(User::class.java)!!
-                findViewById<TextView>(R.id.nicknameTextView).text =
-                    postUser.name ?: "Nickname is null"
+        db.collection("users").document(postUserUid).get().addOnSuccessListener { result ->
+            postUser = result.toObject(User::class.java)!!
+            findViewById<TextView>(R.id.nicknameTextView).text =
+                postUser.name ?: "Nickname is null"
 
-                if(postUser.uid == user?.uid){
-                    binding.registerBtn.visibility = View.GONE
-                }
+            if (postUser.uid == user?.uid) {
+                binding.registerBtn.visibility = View.GONE
             }
-            .addOnFailureListener { exception ->
-                // 실패 시 처리
-            }
+        }.addOnFailureListener { exception ->
+            // 실패 시 처리
+        }
     }
-    fun addChatRoom(documentId : String) {
-        val user = Firebase.auth.currentUser
-        val chatRoom = ChatRoom(mapOf(
-            user?.uid!! to true,
-            postUser.uid!! to true,
-        ), null, documentId)
 
-        db.collection("chatRoom")
-            .whereEqualTo("users.${user?.uid}", true)
-            .whereEqualTo("users.${postUser.uid}", true)
-            .get()
+    fun addChatRoom(documentId: String) {
+        val user = Firebase.auth.currentUser
+        val chatRoom = ChatRoom(
+            mapOf(
+                user?.uid!! to true,
+                postUser.uid!! to true,
+            ), null, documentId
+        )
+
+        db.collection("chatRoom").whereEqualTo("users.${user?.uid}", true)
+            .whereEqualTo("users.${postUser.uid}", true).get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
                     Log.d("chatRoom_TEST", "Empty")
                     // 채팅방이 없는 경우 새로운 채팅방 생성
-                    db.collection("chatRoom")
-                        .add(chatRoom)
+                    db.collection("chatRoom").add(chatRoom)
                         .addOnSuccessListener { documentReference ->
                             goToChatRoom(chatRoom, postUser)
-                        }
-                        .addOnFailureListener { e ->
+                        }.addOnFailureListener { e ->
                             // 실패 시 처리
                         }
                 } else {
                     val existingChatRoom = querySnapshot.documents[0].toObject(ChatRoom::class.java)
                     goToChatRoom(existingChatRoom!!, postUser)
                 }
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 // 실패 시 처리
             }
     }
-
-
 
     fun goToChatRoom(chatRoom: ChatRoom, opponentUid: User) {       //채팅방으로 이동
         var intent = Intent(this@DetailPostActivity, ChattingActivity::class.java)
