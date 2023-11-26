@@ -22,7 +22,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import android.widget.PopupMenu
 import android.view.ContextThemeWrapper
-import java.lang.NullPointerException
 
 class DetailPostActivity : AppCompatActivity() {
 
@@ -171,34 +170,19 @@ class DetailPostActivity : AppCompatActivity() {
 
     fun getPostUser() {
         val user = Firebase.auth.currentUser
-        val tvNickName = findViewById<TextView>(R.id.nicknameTextView)
-        db.collection("users")
-            .document(postUserUid)
-            .get()
-            .addOnSuccessListener { result ->
-                try {
-                    postUser = result.toObject(User::class.java)!!
-                    tvNickName.text = postUser.name ?: "Nickname"
-                } catch (e: NullPointerException) {
-                    tvNickName.text = "Nickname"
-                    Log.e("DetailPostActivity", "Cannot found user data")
-                    return@addOnSuccessListener
-                }
 
-                if (postUser.uid == user?.uid) {
-                    binding.registerBtn.visibility = View.GONE
-                }
+        db.collection("users").document(postUserUid).get().addOnSuccessListener { result ->
+            postUser = result.toObject(User::class.java)!!
+            findViewById<TextView>(R.id.nicknameTextView).text =
+                postUser.name ?: "Nickname is null"
+
+            if (postUser.uid == user?.uid) {
+                binding.registerBtn.visibility = View.GONE
             }
+        }.addOnFailureListener { exception ->
+            // 실패 시 처리
+        }
     }
-
-    fun addChatRoom(documentId: String) {
-        val user = Firebase.auth.currentUser
-        val chatRoom = ChatRoom(
-            mapOf(
-                user?.uid!! to true,
-                postUser.uid!! to true,
-            ), null, documentId
-        )
 
     fun addChatRoom(documentId: String) {
         val user = Firebase.auth.currentUser
