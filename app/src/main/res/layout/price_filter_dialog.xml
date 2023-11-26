@@ -10,13 +10,15 @@
         android:id="@+id/minPriceEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="최소 가격" />
+        android:fontFamily="@font/pretendard_regular"
+        android:hint="최소 가격"
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/maxPriceEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="최대 가격" />
+        android:fontFamily="@font/pretendard_regular"
+        android:hint="최대 가격"
+        android:inputType="number" />
 </LinearLayout>
