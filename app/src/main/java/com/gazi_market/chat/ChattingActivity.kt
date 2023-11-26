@@ -111,6 +111,7 @@ class ChattingActivity : AppCompatActivity() {
                         .addOnSuccessListener { uri ->
                             Glide.with(this)
                                 .load(uri)
+                                .circleCrop()
                                 .into(binding.postImage)
                         }
                         .addOnFailureListener { exception ->
