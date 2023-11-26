@@ -51,7 +51,6 @@ class DetailPostActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         val documentId = intent.getStringExtra("documentId").toString() ?: ""
         val postDocRef = db.collection("posts").document(documentId)
-        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
 
         postDocRef.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
@@ -59,7 +58,6 @@ class DetailPostActivity : AppCompatActivity() {
                 isSoldOut = document.getBoolean("soldOut") ?: false
                 imageURL = document.getString("image") ?: "/image/logo.png"
                 updatePopupMenu(isSoldOut)
-                etcBtn.visibility = if (currentUserUid == postUserUid) View.VISIBLE else View.GONE
                 val title = document.getString("title")
                 val content = document.getString("content")
                 val price = document.getDouble("price")
