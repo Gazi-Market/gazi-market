@@ -61,13 +61,13 @@ class Home : Fragment() {
     }
 
     private fun showFilterOptions() {
-        val filterOptions = arrayOf("전체", "판매중", "판매완료", "가격")
+        val filterOptions = arrayOf("전체", "판매중", "판매완료", "가격대별")
         AlertDialog.Builder(context).setTitle("필터 선택").setItems(filterOptions) { dialog, which ->
             when (filterOptions[which]) {
                 "전체" -> homeViewModel.loadAllItems()
                 "판매중" -> homeViewModel.loadSaleItems()
                 "판매완료" -> homeViewModel.loadSoldOutItems()
-                "가격" -> showPriceFilterDialog()
+                "가격대별" -> showPriceFilterDialog()
             }
             tvTitle.text = filterOptions[which] + " 목록"
         }.setNegativeButton("취소", null).show()

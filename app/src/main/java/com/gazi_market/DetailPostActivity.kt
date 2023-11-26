@@ -190,12 +190,9 @@ class DetailPostActivity : AppCompatActivity() {
 
     private fun getPriceString(price: Double?): String {
         if (isSoldOut) return "판매 완료"
+        val priceFormat = NumberFormat.getNumberInstance(Locale.KOREA)
         return price?.let {
-            val priceFormat = NumberFormat.getNumberInstance(Locale.KOREA)
-            when {
-                it >= 1000000 -> "${priceFormat.format(it / 10000)}만원"
-                else -> "${priceFormat.format(it)}원"
-            }
+            "${priceFormat.format(it)}원"
         } ?: "가격 정보 없음"
     }
 

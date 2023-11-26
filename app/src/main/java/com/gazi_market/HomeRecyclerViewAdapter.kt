@@ -71,8 +71,8 @@ class HomeRecyclerViewAdapter(var context: Context) :
 
     private fun getPriceString(postData: PostData): String {
         if (postData.soldOut) return "판매 완료"
+        val priceFormat = NumberFormat.getNumberInstance(Locale.KOREA)
         return postData.price.let {
-            val priceFormat = NumberFormat.getNumberInstance(Locale.KOREA)
             when {
                 it >= 10000 -> "${priceFormat.format(it / 10000)}만원"
                 else -> "${priceFormat.format(it)}원"
