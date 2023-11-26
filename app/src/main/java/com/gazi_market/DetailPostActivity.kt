@@ -22,8 +22,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import android.widget.PopupMenu
 import android.view.ContextThemeWrapper
-import java.text.NumberFormat
-import java.util.Locale
 
 class DetailPostActivity : AppCompatActivity() {
 
@@ -62,7 +60,6 @@ class DetailPostActivity : AppCompatActivity() {
                 imageURL = document.getString("image") ?: "/image/logo.png"
                 updatePopupMenu(isSoldOut)
                 etcBtn.visibility = if (currentUserUid == postUserUid) View.VISIBLE else View.GONE
-                binding.registerBtn.visibility = if (currentUserUid != postUserUid) View.VISIBLE else View.GONE
                 val title = document.getString("title")
                 val content = document.getString("content")
                 val price = document.getDouble("price")
@@ -81,15 +78,7 @@ class DetailPostActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.createdAtTextView).text =
                     formattedDate ?: "날짜가 없습니다"
                 findViewById<TextView>(R.id.priceTextView).text =
-                    if (isSoldOut == true) "판매 완료" else when {
-                        price?.toInt()!! >= 1_000_000 -> {
-                            val priceInTenThousands = price / 10_000
-                            String.format("%.0f만원", priceInTenThousands)
-                        }
-                        else -> {
-                            NumberFormat.getNumberInstance(Locale.KOREA).format(price.toInt()) + "원"
-                        }
-                    }
+                    if (isSoldOut == true) "판매 완료" else price?.toInt().toString() + "원"
 
                 // post를 작성한 유저 가져오기
                 getPostUser()
@@ -189,9 +178,9 @@ class DetailPostActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.nicknameTextView).text =
                 postUser.name ?: "Nickname is null"
 
-//            if (postUser.uid == user?.uid) {
-//                binding.registerBtn.visibility = View.GONE
-//            } -> 버튼 사라지는 속도 느림, 65번째 줄로 대체
+            if (postUser.uid == user?.uid) {
+                binding.registerBtn.visibility = View.GONE
+            }
         }.addOnFailureListener { exception ->
             // 실패 시 처리
         }
