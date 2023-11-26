@@ -1,8 +1,10 @@
 package com.gazi_market.chat
 
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -10,12 +12,16 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.gazi_market.MainActivity
+import com.gazi_market.PostData
+import com.gazi_market.R
 import com.gazi_market.databinding.ActivityChattingBinding
 import com.gazi_market.model.ChatRoom
 import com.gazi_market.model.Message
 import com.gazi_market.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -24,6 +30,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.TimeZone
@@ -33,6 +40,7 @@ class ChattingActivity : AppCompatActivity() {
     lateinit var btn_exit: ImageButton
     lateinit var btn_submit: ImageButton
     lateinit var txt_title: TextView
+    lateinit var txt_name: TextView
     lateinit var edt_message: EditText
     lateinit var firebaseDatabase: DatabaseReference
     lateinit var recycler_talks: RecyclerView
@@ -65,11 +73,12 @@ class ChattingActivity : AppCompatActivity() {
         btn_exit = binding.imgbtnQuit
         edt_message = binding.edtMessage
         recycler_talks = binding.recyclerMessages
-//        val decoration = RecyclerViewDecoration(6)
-//        recycler_talks.addItemDecoration(decoration)
         btn_submit = binding.btnSubmit
         txt_title = binding.txtTitle
-        txt_title.text = opponentUser!!.name ?: ""
+        txt_name = binding.txtName
+        txt_name.text = opponentUser!!.name ?: ""
+
+        setTitleAndImage()
     }
 
     fun initializeListener() {   //버튼 클릭 시 리스너 초기화
@@ -82,6 +91,37 @@ class ChattingActivity : AppCompatActivity() {
         {
             putMessage()
         }
+    }
+
+    fun setTitleAndImage(){
+        var imageURL : String = ""
+
+        db.collection("posts")
+            .document(chatRoom.postId)
+            .get()
+            .addOnSuccessListener { result ->
+                var post = result.toObject(PostData::class.java)!!
+                txt_title.text = post.title
+                imageURL = post.image
+
+                if (!imageURL.isNullOrEmpty()) {
+                    // Firebase Storage에서 이미지 다운로드 URL 생성
+                    val storageReference = Firebase.storage.reference
+                    storageReference.child(imageURL).downloadUrl
+                        .addOnSuccessListener { uri ->
+                            Glide.with(this)
+                                .load(uri)
+                                .into(binding.postImage)
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e(ContentValues.TAG, "이미지 다운로드 실패: $exception")
+                        }
+                }
+            }
+            .addOnFailureListener { exception ->
+                // 실패 시 처리
+            }
+
     }
 
     fun setupChatRooms() {              //채팅방 목록 초기화 및 표시
