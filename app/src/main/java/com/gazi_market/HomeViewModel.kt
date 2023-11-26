@@ -15,7 +15,7 @@ class HomeViewModel : ViewModel() {
     private var allSaleItems = listOf<PostData>()
 
     init {
-        postsCollection.addSnapshotListener { snapshot, e ->
+        postsCollection.orderBy("createdAt").addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.e("HomeViewModel", "Error fetching documents: ", e)
                 return@addSnapshotListener

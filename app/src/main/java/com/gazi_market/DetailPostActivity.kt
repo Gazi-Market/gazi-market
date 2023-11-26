@@ -22,13 +22,14 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import android.widget.PopupMenu
 import android.view.ContextThemeWrapper
+import java.lang.NullPointerException
 
 class DetailPostActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityDetailPostBinding
     lateinit var postUser: User
-    private val db : FirebaseFirestore = Firebase.firestore
-    lateinit var postUserUid : String
+    private val db: FirebaseFirestore = Firebase.firestore
+    lateinit var postUserUid: String
     private var imageURL: String? = null
 
 
@@ -48,7 +49,7 @@ class DetailPostActivity : AppCompatActivity() {
             popupMenu.menuInflater.inflate(R.menu.post_detail_menu, popupMenu.menu)
 
             // 아이콘 보이게 하기
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 popupMenu.setForceShowIcon(true)
             } else {
                 try {
@@ -58,7 +59,8 @@ class DetailPostActivity : AppCompatActivity() {
                             field.isAccessible = true
                             val menuPopupHelper = field.get(popupMenu)
                             val classPopupHelper = Class.forName(menuPopupHelper.javaClass.name)
-                            val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.java)
+                            val setForceIcons =
+                                classPopupHelper.getMethod("setForceShowIcon", Boolean::class.java)
                             setForceIcons.invoke(menuPopupHelper, true)
                             break
                         }
@@ -76,11 +78,13 @@ class DetailPostActivity : AppCompatActivity() {
                         // 예시: 수정 화면으로 이동하거나 해당 기능 실행
                         return@setOnMenuItemClickListener true
                     }
+
                     R.id.menu_mark_sold -> {
                         // "판매완료로 변경" 클릭 시 할 동작 구현
                         // 예시: 상태 변경 작업 수행 또는 해당 기능 실행
                         return@setOnMenuItemClickListener true
                     }
+
                     else -> return@setOnMenuItemClickListener false
                 }
             }
@@ -178,31 +182,36 @@ class DetailPostActivity : AppCompatActivity() {
         }
     }
 
-    fun getPostUser(){
+    fun getPostUser() {
         val user = Firebase.auth.currentUser
-
+        val tvNickName = findViewById<TextView>(R.id.nicknameTextView)
         db.collection("users")
             .document(postUserUid)
             .get()
             .addOnSuccessListener { result ->
-                postUser = result.toObject(User::class.java)!!
-                findViewById<TextView>(R.id.nicknameTextView).text =
-                    postUser.name ?: "Nickname is null"
+                try {
+                    postUser = result.toObject(User::class.java)!!
+                    tvNickName.text = postUser.name ?: "Nickname"
+                } catch (e: NullPointerException) {
+                    tvNickName.text = "Nickname"
+                    Log.e("DetailPostActivity", "Cannot found user data")
+                    return@addOnSuccessListener
+                }
 
-                if(postUser.uid == user?.uid){
+                if (postUser.uid == user?.uid) {
                     binding.registerBtn.visibility = View.GONE
                 }
             }
-            .addOnFailureListener { exception ->
-                // 실패 시 처리
-            }
     }
-    fun addChatRoom(documentId : String) {
+
+    fun addChatRoom(documentId: String) {
         val user = Firebase.auth.currentUser
-        val chatRoom = ChatRoom(mapOf(
-            user?.uid!! to true,
-            postUser.uid!! to true,
-        ), null, documentId)
+        val chatRoom = ChatRoom(
+            mapOf(
+                user?.uid!! to true,
+                postUser.uid!! to true,
+            ), null, documentId
+        )
 
         db.collection("chatRoom")
             .whereEqualTo("users.${user?.uid}", true)
@@ -229,7 +238,6 @@ class DetailPostActivity : AppCompatActivity() {
                 // 실패 시 처리
             }
     }
-
 
 
     fun goToChatRoom(chatRoom: ChatRoom, opponentUid: User) {       //채팅방으로 이동
