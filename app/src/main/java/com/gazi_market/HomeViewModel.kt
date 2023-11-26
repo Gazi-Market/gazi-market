@@ -45,4 +45,12 @@ class HomeViewModel : ViewModel() {
     fun loadSoldOutItems() {
         _saleItems.value = allSaleItems.filter { it.soldOut }
     }
+
+    fun loadItemsByPriceRange(minPrice: Int?, maxPrice: Int?) {
+        _saleItems.value = allSaleItems.filter { item ->
+            val isWithinMinPrice = minPrice?.let { item.price >= it } ?: true
+            val isWithinMaxPrice = maxPrice?.let { item.price <= it } ?: true
+            isWithinMinPrice && isWithinMaxPrice
+        }
+    }
 }

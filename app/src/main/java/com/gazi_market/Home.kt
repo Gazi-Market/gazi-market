@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -60,14 +61,29 @@ class Home : Fragment() {
     }
 
     private fun showFilterOptions() {
-        val filterOptions = arrayOf("전체", "판매중", "판매완료")
+        val filterOptions = arrayOf("전체", "판매중", "판매완료", "가격")
         AlertDialog.Builder(context).setTitle("필터 선택").setItems(filterOptions) { dialog, which ->
             when (filterOptions[which]) {
                 "전체" -> homeViewModel.loadAllItems()
                 "판매중" -> homeViewModel.loadSaleItems()
                 "판매완료" -> homeViewModel.loadSoldOutItems()
+                "가격" -> showPriceFilterDialog()
             }
             tvTitle.text = filterOptions[which] + " 목록"
         }.setNegativeButton("취소", null).show()
+    }
+
+    private fun showPriceFilterDialog() {
+        val priceFilterLayout = LayoutInflater.from(context).inflate(R.layout.price_filter_dialog, null)
+        AlertDialog.Builder(context)
+            .setTitle("가격 필터")
+            .setView(priceFilterLayout)
+            .setPositiveButton("적용") { dialog, which ->
+                val minPrice = priceFilterLayout.findViewById<EditText>(R.id.minPriceEditText).text.toString().toIntOrNull()
+                val maxPrice = priceFilterLayout.findViewById<EditText>(R.id.maxPriceEditText).text.toString().toIntOrNull()
+                homeViewModel.loadItemsByPriceRange(minPrice, maxPrice)
+            }
+            .setNegativeButton("취소", null)
+            .show()
     }
 }
