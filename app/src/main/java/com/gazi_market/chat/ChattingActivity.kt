@@ -2,14 +2,16 @@ package com.gazi_market.chat
 
 import android.content.ContentValues
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -18,15 +20,10 @@ import com.gazi_market.PostData
 import com.gazi_market.R
 import com.gazi_market.databinding.ActivityChattingBinding
 import com.gazi_market.model.ChatRoom
-import com.gazi_market.model.Message
 import com.gazi_market.model.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -76,22 +73,31 @@ class ChattingActivity : AppCompatActivity() {
         btn_submit = binding.btnSubmit
         txt_title = binding.txtTitle
         txt_name = binding.txtName
-        txt_name.text = opponentUser!!.name ?: ""
+        txt_name.text = opponentUser.name ?: ""
 
         setTitleAndImage()
     }
 
-    fun initializeListener() {   //버튼 클릭 시 리스너 초기화
-        btn_exit.setOnClickListener()
-        {
+    fun initializeListener() {
+        btn_exit.setOnClickListener {
             startActivity(Intent(this@ChattingActivity, MainActivity::class.java))
-//            onBackPressed()
         }
-        btn_submit.setOnClickListener()
-        {
-            putMessage()
-        }
+        btn_submit.setOnClickListener { putMessage() }
+        edt_message.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (!s.isNullOrEmpty()) {
+                    // 텍스트가 있는 경우, 아이콘을 파란색으로 변경
+                    btn_submit.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.sky_blue))
+                } else {
+                    // 텍스트가 없는 경우, 아이콘을 회색으로 변경
+                    btn_submit.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.gray))
+                }
+            }
+        })
     }
+
 
     fun setTitleAndImage(){
         var imageURL : String = ""
@@ -185,6 +191,7 @@ class ChattingActivity : AppCompatActivity() {
 //    }
 
     fun putMessage() {
+        if (edt_message.text.isEmpty()) return
         try {
             val message = hashMapOf(
                 "senderUid" to myUid,
