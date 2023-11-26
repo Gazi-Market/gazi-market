@@ -38,9 +38,7 @@ class DetailPostActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val backBtn = findViewById<ImageView>(R.id.img_btn_back)
-        backBtn.setOnClickListener {
-            finish()
-        }
+        backBtn.setOnClickListener { onBackPressed() }
 
         val etcBtn = findViewById<ImageView>(R.id.img_btn_etc)
         etcBtn.setOnClickListener {
@@ -179,9 +177,11 @@ class DetailPostActivity : AppCompatActivity() {
                         finish()
                         return@setOnMenuItemClickListener true
                     }
+
                     R.id.menu_edit -> {
                         return@setOnMenuItemClickListener true
                     }
+
                     else -> return@setOnMenuItemClickListener false
                 }
             }
@@ -278,6 +278,14 @@ class DetailPostActivity : AppCompatActivity() {
         intent.putExtra("ChatRoom", chatRoom)       //채팅방 정보
         intent.putExtra("Opponent", opponentUid)    //상대방 정보
         intent.putExtra("ChatRoomKey", "")   //채팅방 키
+        startActivity(intent)
+        finish()
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         startActivity(intent)
         finish()
     }
