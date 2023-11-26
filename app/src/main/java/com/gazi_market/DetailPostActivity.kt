@@ -40,7 +40,6 @@ class DetailPostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setupUI()
         loadPostData()
     }
@@ -65,6 +64,7 @@ class DetailPostActivity : AppCompatActivity() {
 
             if (Firebase.auth.currentUser?.uid == postUserUid)
                 binding.registerBtn.visibility = View.GONE
+            else binding.imgBtnEtc.visibility = View.GONE
 
             val createdAtTimestamp = document.getTimestamp("createdAt")
             binding.createdAtTextView.text = formatCreatedAt(createdAtTimestamp)
@@ -191,9 +191,7 @@ class DetailPostActivity : AppCompatActivity() {
     private fun getPriceString(price: Double?): String {
         if (isSoldOut) return "판매 완료"
         val priceFormat = NumberFormat.getNumberInstance(Locale.KOREA)
-        return price?.let {
-            "${priceFormat.format(it)}원"
-        } ?: "가격 정보 없음"
+        return price?.let { "${priceFormat.format(it)}원" } ?: "가격 정보 없음"
     }
 
     private fun loadProductImage() {
