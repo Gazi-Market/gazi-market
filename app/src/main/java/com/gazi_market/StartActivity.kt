@@ -3,40 +3,38 @@ package com.gazi_market
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.gazi_market.account.LoginActivity
 import com.gazi_market.account.SignupActivity
+import com.gazi_market.databinding.ActivityStartBinding
 import com.google.firebase.auth.FirebaseAuth
 
 
 class StartActivity : AppCompatActivity() {
-    private var auth : FirebaseAuth? = null
+    private lateinit var binding: ActivityStartBinding
+    private var auth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_start)
+        binding = ActivityStartBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         auth = FirebaseAuth.getInstance()
+        if (auth!!.currentUser != null) moveLogin()
 
-        // 회원가입
-        val logoutbutton = findViewById<Button>(R.id.startButton)
-        logoutbutton.setOnClickListener {
-            // 회원가입 화면으로
-            val intent = Intent(this, SignupActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(intent)
-        }
+        binding.startButton.setOnClickListener { moveSignUp() }
+        binding.goLogin.setOnClickListener { moveLogin() }
+    }
 
-        // 로그인
-        val signin = findViewById<TextView>(R.id.go_login)
-        signin.setOnClickListener {
+    private fun moveSignUp() {
+        val intent = Intent(this, SignupActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+    }
 
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(intent)
-        }
-
-
+    private fun moveLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 }
