@@ -131,8 +131,8 @@ class EditPostActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent = Intent(this, DetailPostActivity::class.java)
+        intent.putExtra("documentId", documentId)
         startActivity(intent)
         finish()
     }
