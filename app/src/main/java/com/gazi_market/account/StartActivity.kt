@@ -4,6 +4,7 @@ package com.gazi_market.account
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.gazi_market.databinding.ActivityStartBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -14,6 +15,7 @@ class StartActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         binding = ActivityStartBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
