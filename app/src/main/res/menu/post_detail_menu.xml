@@ -6,7 +6,7 @@
         android:title="판매글 수정하기" />
     <item
         android:id="@+id/menu_mark_sold"
-        android:icon="@drawable/jam_write"
+        android:icon="@drawable/change_to_sold_out"
         android:iconTint="@color/gray"
         android:title="판매완료로 변경" />
 </menu>
