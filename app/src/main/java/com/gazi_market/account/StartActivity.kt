@@ -14,8 +14,8 @@ class StartActivity : AppCompatActivity() {
     private var auth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        super.onCreate(savedInstanceState)
         binding = ActivityStartBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

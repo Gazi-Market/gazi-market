@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autoLink="web"
-        android:background="@drawable/message_background_others"
+        android:background="@drawable/chat_others"
         android:fontFamily="@font/pretendard_regular"
         android:gravity="center_vertical|center"
         android:linksClickable="true"

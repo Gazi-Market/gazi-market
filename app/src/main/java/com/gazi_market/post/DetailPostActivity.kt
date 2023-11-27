@@ -59,7 +59,7 @@ class DetailPostActivity : AppCompatActivity() {
             postUserUid = document.getString("uid").toString()
             isSoldOut = document.getBoolean("soldOut") ?: false
             imageURL = document.getString("image") ?: "/image/logo.png"
-            
+
             if (Firebase.auth.currentUser?.uid == postUserUid)
                 binding.registerBtn.visibility = View.GONE
             else binding.imgBtnEtc.visibility = View.GONE
@@ -115,7 +115,8 @@ class DetailPostActivity : AppCompatActivity() {
 
     private fun updatePopupMenu(soldOut: Boolean) {
         binding.imgBtnEtc.setOnClickListener {
-            val popupMenu = PopupMenu(ContextThemeWrapper(this, R.style.PopupMenuStyle), binding.imgBtnEtc)
+            val popupMenu =
+                PopupMenu(ContextThemeWrapper(this, R.style.PopupMenuStyle), binding.imgBtnEtc)
             popupMenu.menuInflater.inflate(R.menu.post_detail_menu, popupMenu.menu)
             popupMenu.setForceShowIcon(true)
             val titleString = if (isSoldOut) "판매중으로 변경" else "판매완료로 변경"
@@ -215,8 +216,14 @@ class DetailPostActivity : AppCompatActivity() {
         val chatRoom = ChatRoom(mapOf(user.uid to true, otherUserId to true), null, documentId)
 
         checkExistingChatRoom(user.uid, otherUserId) { existingChatRoom ->
-            val room = existingChatRoom ?: chatRoom
-            goToChatRoom(room, postUser)
+            if (existingChatRoom != null) {
+                val room = existingChatRoom ?: chatRoom
+                goToChatRoom(room, postUser)
+                return@checkExistingChatRoom
+            }
+            db.collection("chatRoom").add(chatRoom).addOnSuccessListener { documentReference ->
+                goToChatRoom(chatRoom, postUser)
+            }
         }
     }
 
@@ -241,7 +248,7 @@ class DetailPostActivity : AppCompatActivity() {
         val intent = Intent(this@DetailPostActivity, ChattingActivity::class.java)
         intent.putExtra("ChatRoom", chatRoom)  //채팅방 정보
         intent.putExtra("Opponent", opponentUid)  //상대방 정보
-        intent.putExtra("ChatRoomKey", chatRoom.postId)  //채팅방 키
+        intent.putExtra("ChatRoomKey", "")  //채팅방 키
         startActivity(intent)
         finish()
     }
