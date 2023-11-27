@@ -1,4 +1,4 @@
-package com.gazi_market
+package com.gazi_market.home
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -13,7 +13,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.gazi_market.R
 import com.gazi_market.databinding.FragmentHomeBinding
+import com.gazi_market.post.PostActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference

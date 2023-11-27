@@ -1,11 +1,9 @@
-package com.gazi_market
+package com.gazi_market.account
 
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.gazi_market.account.LoginActivity
-import com.gazi_market.account.SignupActivity
 import com.gazi_market.databinding.ActivityStartBinding
 import com.google.firebase.auth.FirebaseAuth
 

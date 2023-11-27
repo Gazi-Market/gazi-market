@@ -1,4 +1,4 @@
-package com.gazi_market
+package com.gazi_market.post
 
 // ImageZoomActivity.kt
 import android.content.ContentValues
@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.gazi_market.R
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 

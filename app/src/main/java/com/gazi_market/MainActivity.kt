@@ -1,12 +1,11 @@
 package com.gazi_market
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.gazi_market.chat.ChatRoomFragment
 import com.gazi_market.databinding.ActivityMainBinding
+import com.gazi_market.home.Home
 import com.gazi_market.myPage.MyPageFragment
 
 class MainActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package com.gazi_market
+package com.gazi_market.post
 
 import android.content.ContentValues.TAG
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +18,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import android.widget.PopupMenu
 import android.view.ContextThemeWrapper
+import com.gazi_market.MainActivity
+import com.gazi_market.R
 import com.google.firebase.Timestamp
 import java.text.NumberFormat
 import java.util.Locale
@@ -239,7 +241,7 @@ class DetailPostActivity : AppCompatActivity() {
         val intent = Intent(this@DetailPostActivity, ChattingActivity::class.java)
         intent.putExtra("ChatRoom", chatRoom)  //채팅방 정보
         intent.putExtra("Opponent", opponentUid)  //상대방 정보
-        intent.putExtra("ChatRoomKey", "")  //채팅방 키
+        intent.putExtra("ChatRoomKey", chatRoom.postId)  //채팅방 키
         startActivity(intent)
         finish()
     }

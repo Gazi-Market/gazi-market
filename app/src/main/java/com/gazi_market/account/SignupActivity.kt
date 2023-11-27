@@ -9,13 +9,11 @@ import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.gazi_market.R
-import com.gazi_market.StartActivity
+import com.gazi_market.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,24 +22,18 @@ import com.google.firebase.ktx.Firebase
 
 
 class SignupActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySignupBinding
     private var auth : FirebaseAuth? = null
     private val db : FirebaseFirestore = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivitySignupBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         auth = Firebase.auth
-        setContentView(R.layout.activity_signup)
 
-        val backBtn = findViewById<ImageView>(R.id.img_btn_back)
-        backBtn.setOnClickListener {
-            startActivity(Intent(this@SignupActivity, StartActivity::class.java))
-            finish()
-        }
-
-        val signupID = findViewById<EditText>(R.id.signupID)
-        val signupPwd = findViewById<EditText>(R.id.signupPassword)
-        val signupPwdCheck = findViewById<EditText>(R.id.checkPassword)
-        val signupNickName = findViewById<EditText>(R.id.nickName)
+        binding.imgBtnBack.setOnClickListener { onBackPressed() }
 
         val signupButton = findViewById<Button>(R.id.signup_okButton)
         signupButton.isEnabled = false
@@ -60,10 +52,10 @@ class SignupActivity : AppCompatActivity() {
                 val checkPWD2 = findViewById<TextView>(R.id.checkPWD2)
 
                 // 해당 EditText의 String
-                val email = signupID.text.toString()
-                val pwd = signupPwd.text.toString()
-                val pwdCheck = signupPwdCheck.text.toString()
-                val nickName = signupNickName.text.toString()
+                val email = binding.signupID.text.toString()
+                val pwd = binding.signupPassword.text.toString()
+                val pwdCheck = binding.checkPassword.text.toString()
+                val nickName = binding.nickName.text.toString()
 
                 if(email.isEmpty()){
                     checkID.visibility = View.GONE
@@ -113,7 +105,7 @@ class SignupActivity : AppCompatActivity() {
                     isPWD2 = true
                 }
 
-                signupButton.isEnabled = isID && isPWD && isPWD2 && signupNickName.text.isNotEmpty()
+                signupButton.isEnabled = isID && isPWD && isPWD2 && binding.nickName.text.isNotEmpty()
                 signupButton.setTextColor(if (signupButton.isEnabled) Color.BLACK else Color.GRAY)
             }
 
@@ -122,16 +114,24 @@ class SignupActivity : AppCompatActivity() {
             }
         }
 
-        signupID.addTextChangedListener(textWatcher)
-        signupPwd.addTextChangedListener(textWatcher)
-        signupPwdCheck.addTextChangedListener(textWatcher)
-        signupNickName.addTextChangedListener(textWatcher)
+        binding.signupID.addTextChangedListener(textWatcher)
+        binding.signupPassword.addTextChangedListener(textWatcher)
+        binding.checkPassword.addTextChangedListener(textWatcher)
+        binding.nickName.addTextChangedListener(textWatcher)
 
         signupButton.setOnClickListener {
 
-            createAccount(signupID.text.toString(), signupPwd.text.toString(), signupNickName.text.toString())
+            createAccount(binding.signupID.text.toString(), binding.signupPassword.text.toString(), binding.nickName.text.toString())
         }
     }
+
+    override fun onBackPressed() {
+        val intent = Intent(this@SignupActivity, StartActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
+    }
+
     // 계정 생성
     private fun createAccount(email: String, password: String, nickname : String) {
 

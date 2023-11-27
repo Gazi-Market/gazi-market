@@ -8,7 +8,6 @@ import android.text.TextWatcher
 import android.widget.Button
 import android.widget.Toast
 import com.gazi_market.MainActivity
-import com.gazi_market.StartActivity
 import com.gazi_market.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

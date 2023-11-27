@@ -15,23 +15,23 @@
         android:theme="@style/Theme.Gazimarket"
         tools:targetApi="31">
         <activity
-            android:name=".EditPostActivity"
+            android:name=".post.EditPostActivity"
             android:exported="false"
             android:theme="@style/Theme.Gazimarket" />
         <activity
-            android:name=".DetailPostActivity"
+            android:name=".post.DetailPostActivity"
             android:exported="false" />
         <activity
-            android:name=".PostActivity"
+            android:name=".post.PostActivity"
             android:exported="false" />
         <activity android:name=".MainActivity" />
         <activity android:name=".account.LoginActivity" />
         <activity android:name=".account.SignupActivity" />
         <activity android:name=".account.SignUpOkActivity" />
         <activity android:name=".chat.ChattingActivity" />
-        <activity android:name=".ImageZoomActivity" />
+        <activity android:name=".post.ImageZoomActivity" />
         <activity
-            android:name=".StartActivity"
+            android:name=".account.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

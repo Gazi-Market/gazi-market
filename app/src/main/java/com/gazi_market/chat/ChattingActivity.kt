@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.gazi_market.MainActivity
-import com.gazi_market.PostData
+import com.gazi_market.post.PostData
 import com.gazi_market.R
 import com.gazi_market.databinding.ActivityChattingBinding
 import com.gazi_market.model.ChatRoom
@@ -62,7 +62,7 @@ class ChattingActivity : AppCompatActivity() {
         firebaseDatabase = FirebaseDatabase.getInstance().reference!!
 
         chatRoom = (intent.getSerializableExtra("ChatRoom")) as ChatRoom      //채팅방 정보
-        chatRoomKey = intent.getStringExtra("ChatRoomKey")!!            //채팅방 키
+        chatRoomKey = intent.getStringExtra("ChatRoomKey").toString()
         opponentUser = (intent.getSerializableExtra("Opponent")) as User    //상대방 유저 정보
     }
 
@@ -87,12 +87,14 @@ class ChattingActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                if (!s.isNullOrEmpty()) {
+                if (!s.isNullOrEmpty() && s.trim { it <= ' ' }.isNotEmpty()) {
                     // 텍스트가 있는 경우, 아이콘을 파란색으로 변경
                     btn_submit.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.sky_blue))
+                    btn_submit.isEnabled = true
                 } else {
                     // 텍스트가 없는 경우, 아이콘을 회색으로 변경
                     btn_submit.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.gray))
+                    btn_submit.isEnabled = false
                 }
             }
         })

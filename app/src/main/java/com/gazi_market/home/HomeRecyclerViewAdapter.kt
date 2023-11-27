@@ -1,4 +1,4 @@
-package com.gazi_market
+package com.gazi_market.home
 
 import android.content.Context
 import android.content.Intent
@@ -10,6 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.gazi_market.R
+import com.gazi_market.post.DetailPostActivity
+import com.gazi_market.post.PostData
 import com.google.firebase.Firebase
 import com.google.firebase.storage.storage
 import java.text.NumberFormat

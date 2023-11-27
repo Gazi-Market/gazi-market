@@ -1,4 +1,4 @@
-package com.gazi_market
+package com.gazi_market.post
 
 import java.sql.Timestamp
 import java.util.Date
