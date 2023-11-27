@@ -113,10 +113,9 @@ class DetailPostActivity : AppCompatActivity() {
 
     private fun updatePopupMenu(soldOut: Boolean) {
         binding.imgBtnEtc.setOnClickListener {
-            val popupMenu =
-                PopupMenu(ContextThemeWrapper(this, R.style.PopupMenuStyle), binding.imgBtnEtc)
+            val popupMenu = PopupMenu(ContextThemeWrapper(this, R.style.PopupMenuStyle), binding.imgBtnEtc)
             popupMenu.menuInflater.inflate(R.menu.post_detail_menu, popupMenu.menu)
-
+            popupMenu.setForceShowIcon(true)
             val titleString = if (isSoldOut) "판매중으로 변경" else "판매완료로 변경"
             popupMenu.menu.findItem(R.id.menu_mark_sold).title = titleString
 

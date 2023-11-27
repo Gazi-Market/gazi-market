@@ -1,10 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_edit"
-        android:title="판매글 수정하기"
-        android:icon="@drawable/update_btn"/>
+        android:icon="@drawable/update_btn"
+        android:iconTint="@color/dark_gray"
+        android:title="판매글 수정하기" />
     <item
         android:id="@+id/menu_mark_sold"
-        android:title="판매완료로 변경"
-        android:icon="@drawable/change_to_sold_out"/>
+        android:icon="@drawable/change_to_sold_out"
+        android:iconTint="@color/dark_gray"
+        android:title="판매완료로 변경" />
 </menu>

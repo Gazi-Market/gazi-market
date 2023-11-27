@@ -1,9 +1,14 @@
 package com.gazi_market
 
+import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
@@ -11,6 +16,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.gazi_market.databinding.ActivityPostBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +32,7 @@ class PostActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityPostBinding
     private var selectedImageUri: Uri? = null
+    private var isImageSelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +43,19 @@ class PostActivity : AppCompatActivity() {
         backBtn.setOnClickListener {
             startActivity(Intent(this@PostActivity, MainActivity::class.java))
             finish()
+        }
+
+        val editTexts = listOf(
+            findViewById<EditText>(R.id.editTitle),
+            findViewById<EditText>(R.id.editPrice),
+            findViewById<EditText>(R.id.editContent)
+        )
+        editTexts.forEach { editText ->
+            editText.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) { updateButtonState() }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            })
         }
 
         // 이미지 처리
@@ -49,7 +69,7 @@ class PostActivity : AppCompatActivity() {
         binding.registerBtn.setOnClickListener {
 
             // 이미지 파이어베이스 스토리지에 저장
-            if(selectedImageUri!=null){
+            if (selectedImageUri != null) {
                 selectedImageUri?.let { uri ->
                     uploadImageToFirebaseStorage(uri) { imageName ->
                     }
@@ -66,7 +86,7 @@ class PostActivity : AppCompatActivity() {
 
             val uid = FirebaseAuth.getInstance().currentUser?.uid!!.toString()
 
-            if(selectedImageUri!=null){
+            if (selectedImageUri != null) {
                 selectedImageUri?.let { uri ->
                     uploadImageToFirebaseStorage(uri) { imageName ->
                         val postData = PostData(
@@ -100,16 +120,31 @@ class PostActivity : AppCompatActivity() {
             }
     }
 
+    private fun updateButtonState() {
+        val title = findViewById<EditText>(R.id.editTitle).text.toString()
+        val price = findViewById<EditText>(R.id.editPrice).text.toString()
+        val content = findViewById<EditText>(R.id.editContent).text.toString()
+        val allFieldsFilled = title.isNotEmpty() && price.isNotEmpty() && content.isNotEmpty() && isImageSelected
+        binding.registerBtn.isEnabled = allFieldsFilled
+        val color = if (allFieldsFilled) ContextCompat.getColor(this, R.color.main_color) // 활성화된 버튼 색
+        else ContextCompat.getColor(this, R.color.gray) // 비활성화된 버튼 색
+        binding.registerBtn.backgroundTintList = ColorStateList.valueOf(color)
+    }
+
     // 이미지 가져오기
     private val activityResult: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        if (it.resultCode == RESULT_OK && it.data != null) {
-            selectedImageUri = it.data!!.data
-            Glide.with(this)
-                .load(selectedImageUri)
-                .into(binding.selectImageView)
+        if (it.resultCode != RESULT_OK || it.data == null) {
+            isImageSelected = false
+            return@registerForActivityResult
         }
+        Log.d(TAG, "is selected")
+        selectedImageUri = it.data!!.data
+        Glide.with(this).load(selectedImageUri).into(binding.selectImageView)
+
+        isImageSelected = true
+        updateButtonState()
     }
 
     // 데이터 등록
