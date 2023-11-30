@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.isDigitsOnly
 import com.gazi_market.R
 import com.gazi_market.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -42,6 +43,7 @@ class SignupActivity : AppCompatActivity() {
         var isID = false
         var isPWD = false
         var isPWD2 = false
+        var isBirth = false
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
@@ -50,12 +52,14 @@ class SignupActivity : AppCompatActivity() {
                 val checkID = findViewById<TextView>(R.id.checkID)
                 val checkPWD = findViewById<TextView>(R.id.checkPWD)
                 val checkPWD2 = findViewById<TextView>(R.id.checkPWD2)
+                val checkBirth = findViewById<TextView>(R.id.checkBirth)
 
                 // 해당 EditText의 String
                 val email = binding.signupID.text.toString()
                 val pwd = binding.signupPassword.text.toString()
                 val pwdCheck = binding.checkPassword.text.toString()
                 val nickName = binding.nickName.text.toString()
+                val birth = binding.birth.text.toString()
 
                 if(email.isEmpty()){
                     checkID.visibility = View.GONE
@@ -93,7 +97,7 @@ class SignupActivity : AppCompatActivity() {
                 if(pwdCheck.isEmpty()){
                     checkPWD2.visibility = View.GONE
                 }
-                else if (!pwd.equals(pwdCheck)) {
+                else if (pwd != pwdCheck) {
                     checkPWD2.text = "X 비밀번호 불일치"
                     checkPWD2.setTextColor(Color.parseColor("#FF0000"))
                     checkPWD2.visibility = View.VISIBLE
@@ -105,7 +109,22 @@ class SignupActivity : AppCompatActivity() {
                     isPWD2 = true
                 }
 
-                signupButton.isEnabled = isID && isPWD && isPWD2 && binding.nickName.text.isNotEmpty()
+                if(birth.isEmpty()){
+                    checkBirth.visibility = View.GONE
+                }
+                else if (birth.length != 8 || !birth.isDigitsOnly()) {
+                    checkBirth.text = "X 올바르지 않은 형식"
+                    checkBirth.setTextColor(Color.parseColor("#FF0000"))
+                    checkBirth.visibility = View.VISIBLE
+                    isBirth = false
+                } else {
+                    checkBirth.text = "O 올바른 형식"
+                    checkBirth.setTextColor(Color.parseColor("#009B00"))
+                    checkBirth.visibility = View.VISIBLE
+                    isBirth = true
+                }
+
+                signupButton.isEnabled = isID && isPWD && isPWD2 && binding.nickName.text.isNotEmpty() && isBirth
                 signupButton.setTextColor(if (signupButton.isEnabled) Color.BLACK else Color.GRAY)
             }
 
@@ -118,10 +137,11 @@ class SignupActivity : AppCompatActivity() {
         binding.signupPassword.addTextChangedListener(textWatcher)
         binding.checkPassword.addTextChangedListener(textWatcher)
         binding.nickName.addTextChangedListener(textWatcher)
+        binding.birth.addTextChangedListener(textWatcher)
 
         signupButton.setOnClickListener {
 
-            createAccount(binding.signupID.text.toString(), binding.signupPassword.text.toString(), binding.nickName.text.toString())
+            createAccount(binding.signupID.text.toString(), binding.signupPassword.text.toString(), binding.nickName.text.toString(), binding.birth.text.toString())
         }
     }
 
@@ -133,7 +153,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
     // 계정 생성
-    private fun createAccount(email: String, password: String, nickname : String) {
+    private fun createAccount(email: String, password: String, nickname : String, birth : String) {
 
         if (email.isNotEmpty() && password.isNotEmpty()) {
             auth?.createUserWithEmailAndPassword(email, password)
@@ -154,6 +174,7 @@ class SignupActivity : AppCompatActivity() {
                             userMap["uid"] = uid
                             userMap["email"] = email
                             userMap["name"] = nickname
+                            userMap["birth"] = birth
 
                             db.collection("users")
                                 .document(uid)
