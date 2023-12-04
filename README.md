@@ -13,7 +13,7 @@
 
 </div>
 
-# Gazi-Market v1.0
+# Gazi-Market
 > 한성대학교 고급 모바일 프로그래밍 프로젝트 : 가지마켓<br>개발 기간 : 2023.10 ~ 2023.12
 
 ## Contributors
