@@ -111,13 +111,37 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="5dp"
-        android:hint="닉네임"
+        android:hint="이름"
         android:inputType="text"
         android:fontFamily="@font/pretendard_regular"
         android:textSize="16sp"
         android:background="@drawable/account_input"
         android:padding="13dp"
         android:layout_marginHorizontal="16dp" />
+
+    <EditText
+        android:id="@+id/birth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="5dp"
+        android:hint="생년월일  ex)20001128"
+        android:inputType="number"
+        android:fontFamily="@font/pretendard_regular"
+        android:textSize="16sp"
+        android:background="@drawable/account_input"
+        android:padding="13dp"
+        android:layout_marginHorizontal="16dp" />
+
+    <TextView
+        android:id="@+id/checkBirth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:textSize="13sp"
+        android:fontFamily="@font/pretendard_regular"
+        android:layout_gravity="left"
+        android:layout_marginHorizontal="30dp" />
 
     <Button
         android:id="@+id/signup_okButton"
