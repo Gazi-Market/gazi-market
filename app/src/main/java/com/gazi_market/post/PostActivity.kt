@@ -32,6 +32,7 @@ class PostActivity : AppCompatActivity() {
     lateinit var binding: ActivityPostBinding
     private var selectedImageUri: Uri? = null
     private var isImageSelected = false
+    private var isProcessingPost = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +67,10 @@ class PostActivity : AppCompatActivity() {
 
         // 등록하기 버튼
         binding.registerBtn.setOnClickListener {
+            if (isProcessingPost) {
+                return@setOnClickListener // 이미 처리중이면 더 이상 진행하지 않음
+            }
+            isProcessingPost = true // 처리 시작 표시
 
             // 이미지 파이어베이스 스토리지에 저장
             if (selectedImageUri != null) {
